@@ -1,7 +1,7 @@
 # Личный проект «Readme»
 
-* Студент: [Anton Paskanny](https://up.htmlacademy.ru/nodejs-2/6/user/107440).
-* Наставник: `Неизвестно`.
+- Студент: [Anton Paskanny](https://up.htmlacademy.ru/nodejs-2/6/user/107440).
+- Наставник: [Андрей Осипук](https://htmlacademy.ru/profile/id616431).
 
 ---
 
