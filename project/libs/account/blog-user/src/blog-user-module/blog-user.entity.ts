@@ -1,4 +1,4 @@
-import { genSalt, hash } from 'bcrypt';
+import { genSalt, hash, compare } from 'bcrypt';
 
 import { Entity } from '@project/core';
 import { StorableEntity, AuthUser, UserRole } from '@project/core';
@@ -48,5 +48,9 @@ export class BlogUserEntity extends Entity implements StorableEntity<AuthUser> {
     const salt = await genSalt(SALT_ROUNDS);
     this.passwordHash = await hash(password, salt);
     return this;
+  }
+
+  public async comparePassword(password: string): Promise<boolean> {
+    return compare(password, this.passwordHash);
   }
 }
