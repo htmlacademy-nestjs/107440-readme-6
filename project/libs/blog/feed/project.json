@@ -1,0 +1,9 @@
+{
+  "name": "feed",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/blog/feed/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project feed --web",
+  "targets": {}
+}
