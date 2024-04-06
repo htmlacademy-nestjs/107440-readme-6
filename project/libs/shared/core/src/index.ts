@@ -12,5 +12,7 @@ export { PostQuote } from './lib/types/posts/post-quote.interface';
 export { PostLink } from './lib/types/posts/post-link.interface';
 export { PostPhoto } from './lib/types/posts/post-photo.interface';
 
+export { Comment } from './lib/types/comments/comment.interface';
+
 export { StorableEntity } from './lib/interfaces/storable-entity.interface';
 export { EntityFactory } from './lib/interfaces/entity-factory.interface';
