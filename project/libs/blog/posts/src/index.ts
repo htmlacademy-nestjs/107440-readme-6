@@ -1,1 +1,1 @@
-import { PostsModule } from './posts-module/posts.module';
+export { PostsModule } from './posts-module/posts.module';

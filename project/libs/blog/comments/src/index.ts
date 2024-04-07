@@ -1,1 +1,1 @@
-import { CommentsModule } from './comments-module/comments.module';
+export { CommentsModule } from './comments-module/comments.module';
