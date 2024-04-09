@@ -1,11 +1,6 @@
-import { StorableEntity, PostType, PostText, PostState } from '@project/core';
+import { StorableEntity, PostText, Entity } from '@project/core';
 
-import { PostEntity } from './post.entity';
-
-export class PostTextEntity
-  extends PostEntity
-  implements StorableEntity<PostText>
-{
+export class PostTextEntity extends Entity implements StorableEntity<PostText> {
   public name: string;
   public announcement: string;
   public text: string;
@@ -24,11 +19,6 @@ export class PostTextEntity
     this.name = post.name;
     this.announcement = post.announcement;
     this.text = post.text;
-    this.state = PostState.Draft;
-    this.type = PostType.Text;
-
-    this.createdDate = '';
-    this.publishedDate = '';
   }
 
   public toPOJO(): PostText {
@@ -37,10 +27,6 @@ export class PostTextEntity
       name: this.name,
       announcement: this.announcement,
       text: this.text,
-      state: this.state as PostState,
-      type: this.type as PostType,
-      createdDate: this.createdDate,
-      publishedDate: this.publishedDate,
     };
   }
 }
