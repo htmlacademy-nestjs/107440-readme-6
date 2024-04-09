@@ -6,11 +6,19 @@ import {
   Query,
   Put,
   Get,
+  Body,
 } from '@nestjs/common';
+import { BlogPostDto } from '../dto';
+import { BlogPostRepository } from '../repositories/post.repository';
+import { BlogPostService } from './posts.service';
 
 @Controller('posts')
-export class PostsController {
-  @Get('/')
+export class BlogPostController {
+  constructor(
+    private blogPostRepository: BlogPostRepository,
+    private blogPostsService: BlogPostService
+  ) {}
+  @Get()
   gestPosts(
     @Query('offset') offset: number,
     @Query('limit') limit: number,
@@ -20,9 +28,10 @@ export class PostsController {
     // Implementation
   }
 
-  @Post('/')
-  createPost() {
-    // Implementation
+  @Post()
+  createPost(@Body() blogPostDto: BlogPostDto) {
+    const blogPost = this.blogPostsService.createPost(blogPostDto);
+    return blogPost;
   }
 
   @Put('/:postId')
@@ -56,11 +65,6 @@ export class PostsController {
 
   @Get('/search')
   searchPostsByTitle(@Query('title') title: string) {
-    // Implementation
-  }
-
-  @Get(':userId/posts')
-  getPostsByUser(@Param('userId') userId: string) {
     // Implementation
   }
 }
