@@ -1,5 +1,5 @@
-import { Post } from './post.interface';
+import { PostFields } from './post.fields.interface';
 
-export interface PostPhoto extends Post {
+export interface PostPhoto extends PostFields {
   photo: string;
 }

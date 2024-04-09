@@ -1,6 +1,6 @@
-import { Post } from './post.interface';
+import { PostFields } from './post.fields.interface';
 
-export interface PostText extends Post {
+export interface PostText extends PostFields {
   name: string;
   announcement: string;
   text: string;

@@ -1,4 +1,4 @@
-export enum PostType {
+export enum PostTypeEnum {
   Video = 'video',
   Text = 'text',
   Quote = 'quote',
