@@ -55,4 +55,32 @@ export class BlogPostService {
 
     return blogPostEntity;
   }
+
+  public async updatePost(dto: BlogPostDto, postId: string) {
+    // Implementation
+  }
+
+  public async deletePost(postId: string) {
+    // Implementation
+  }
+
+  public async addLike(postId: string) {
+    // Implementation
+  }
+
+  public async removeLike(postId: string) {
+    // Implementation
+  }
+
+  public async getPosts() {
+    // Implementation
+  }
+
+  public async getPostsByUserId(userId: string) {
+    // Implementation
+  }
+
+  public async searchPostsByTitle(title: string) {
+    // Implementation
+  }
 }
