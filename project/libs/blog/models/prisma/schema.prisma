@@ -14,14 +14,28 @@ datasource db {
 }
 
 model Post {
-  id          String   @id @default(uuid()) @map("id")
+  id          String    @id @default(uuid()) @map("id")
   title       String
   description String
   content     String
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  userId      String   @map("user_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  userId      String    @map("user_id")
+  Comment     Comment[]
 
   @@index([title])
   @@map("posts")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  message   String
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  postId    String   @map("post_id")
+
+  @@index([postId])
+  @@map("comments")
 }
