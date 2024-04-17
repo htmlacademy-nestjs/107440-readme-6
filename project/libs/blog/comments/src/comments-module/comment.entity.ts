@@ -1,9 +1,11 @@
 import { Entity, Comment, StorableEntity } from '@project/core';
 
 export class CommentEntity extends Entity implements StorableEntity<Comment> {
-  public createdDate: string;
+  public createdAt: Date;
+  public updatedAt: Date;
   public text: string;
   public postId: string;
+  public userId: string;
 
   constructor(comment?: Comment) {
     super();
@@ -18,15 +20,18 @@ export class CommentEntity extends Entity implements StorableEntity<Comment> {
     this.id = comment.id ?? '';
     this.postId = comment.postId;
     this.text = comment.text;
-    this.createdDate = comment.createdDate;
+    this.createdAt = comment.createdAt;
+    this.updatedAt = comment.updatedAt;
   }
 
   public toPOJO(): Comment {
     return {
       id: this.id,
       postId: this.postId,
+      userId: this.userId,
       text: this.text,
-      createdDate: this.createdDate,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
     };
   }
 }
