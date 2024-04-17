@@ -1,9 +1,7 @@
-import { StorableEntity, PostType, PostState, PostVideo } from '@project/core';
-
-import { PostEntity } from './post.entity';
+import { StorableEntity, PostVideo, Entity } from '@project/core';
 
 export class PostVideoEntity
-  extends PostEntity
+  extends Entity
   implements StorableEntity<PostVideo>
 {
   public name: string;
@@ -19,25 +17,14 @@ export class PostVideoEntity
       return;
     }
 
-    this.id = post.id ?? '';
     this.name = post.name;
     this.linkToVideo = post.linkToVideo;
-    this.state = PostState.Draft;
-    this.type = PostType.Text;
-
-    this.createdDate = '';
-    this.publishedDate = '';
   }
 
   public toPOJO(): PostVideo {
     return {
-      id: this.id,
       name: this.name,
       linkToVideo: this.linkToVideo,
-      state: this.state as PostState,
-      type: this.type as PostType,
-      createdDate: this.createdDate,
-      publishedDate: this.publishedDate,
     };
   }
 }

@@ -1,6 +1,6 @@
-import { Post } from './post.interface';
+import { PostFields } from './post.fields.interface';
 
-export interface PostQuote extends Post {
+export interface PostQuote extends PostFields {
   text: string;
   author: string;
 }

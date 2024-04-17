@@ -11,18 +11,20 @@ import { AppModule } from './app/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const globalPrefix = '/';
+
+  const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
+
   const port = process.env.PORT || 3000;
 
   const config = new DocumentBuilder()
-    .setTitle('Blog app')
-    .setDescription('The blog API description')
+    .setTitle('The <Blog> service')
+    .setDescription('Blog service API')
     .setVersion('1.0')
-    .addTag('blog')
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/blog', app, document);
+  SwaggerModule.setup('spec/blog', app, document);
 
   await app.listen(port);
   Logger.log(
