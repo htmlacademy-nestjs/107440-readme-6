@@ -15,14 +15,17 @@ datasource db {
 }
 
 model Post {
-  id          String    @id @default(uuid()) @map("id")
+  id          String   @id @default(uuid()) @map("id")
   title       String
   description String
   content     String
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-  userId      String    @map("user_id")
-  Comment     Comment[]
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  userId      String   @map("user_id")
+  state       String
+  tags        String[]
+
+  comments Comment[]
 
   @@index([title])
   @@map("posts")
@@ -39,4 +42,46 @@ model Comment {
 
   @@index([postId])
   @@map("comments")
+}
+
+model VideoPost {
+  id       String  @id @default(uuid())
+  title    String
+  videoUrl String  @map("video_url")
+  postId   String?
+
+  @@map("video_posts")
+}
+
+model LinkPost {
+  id          String  @id @default(uuid())
+  link        String
+  description String?
+  postId      String?
+
+  @@map("link_posts")
+}
+
+model QuotePost {
+  id     String @id @default(uuid())
+  text   String
+  author String
+
+  @@map("quote_posts")
+}
+
+model TextPost {
+  id           String @id @default(uuid())
+  title        String
+  announcement String
+  text         String
+
+  @@map("text_posts")
+}
+
+model PhotoPost {
+  id    String @id @default(uuid())
+  photo String
+
+  @@map("photo_posts")
 }

@@ -13,6 +13,7 @@ function getPosts() {
       title: 'Худеющий',
       userId: FIRST_USER_ID,
       content: 'Недавно прочитал страшный роман «Худеющий».',
+      state: 'Черновик',
       description:
         'На мой взгляд, это один из самых страшных романов Стивена Кинга.',
     },
@@ -22,6 +23,7 @@ function getPosts() {
       userId: FIRST_USER_ID,
       content: 'Полезная книга по JavaScript',
       description: 'Секреты и тайные знания по JavaScript.',
+      state: 'Опубликован',
       comments: [
         {
           message: 'Это действительно отличная книга!',
@@ -47,6 +49,7 @@ async function seedDb(prismaClient: PrismaClient) {
         description: post.description,
         content: post.description,
         userId: post.userId,
+        state: post.state,
         comments: post.comments
           ? {
               create: post.comments,
