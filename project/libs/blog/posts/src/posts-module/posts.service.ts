@@ -1,41 +1,29 @@
-import { Injectable } from '@nestjs/common';
-import { PostStateEnum } from '@project/core';
+import { ConflictException, Injectable } from '@nestjs/common';
+import { PostTypeEnum } from '@project/core';
 
 import { BlogPostRepository } from '../repositories';
 import { BlogPostDto } from '../dto';
-import { BlogPostEntity } from '../entities';
-import { BlogPostFactory, PostTypesFactory } from '../factories';
+import {
+  POST_RECORD_NOT_FOUND,
+  POST_TYPE_DATA_IS_NOT_PROVIDED,
+  POST_TYPE_IS_INCORRECT,
+} from './posts.constant';
 
 @Injectable()
 export class BlogPostService {
-  constructor(
-    private blogPostRepository: BlogPostRepository,
-    private blogPostFactory: BlogPostFactory,
-    private postTypesFactory: PostTypesFactory
-  ) {}
-  public async createPost(dto: BlogPostDto): Promise<BlogPostEntity> {
+  constructor(private blogPostRepository: BlogPostRepository) {}
+  public async createPost(dto: BlogPostDto): Promise<void> {
     const { type, postFields } = dto;
 
-    // 1. Create all needed entities: ParentPost, PostByType and PostFileldsRelation
-    const parentPostData = {
-      id: 'test_id',
-      createdAt: 'test_createdAt',
-      publishedAt: 'test_publishedAt',
-      state: PostStateEnum.Draft,
-      authorId: 'test_authorId',
-      type,
-    };
+    if (!type || !(type in PostTypeEnum)) {
+      throw new ConflictException(POST_TYPE_IS_INCORRECT);
+    }
 
-    const blogPostEntity = this.blogPostFactory.create(parentPostData);
+    if (!postFields) {
+      throw new ConflictException(POST_TYPE_DATA_IS_NOT_PROVIDED);
+    }
 
-    const postByTypeEntity = this.postTypesFactory.createPostByType(
-      postFields,
-      type
-    );
-
-    // 2. Save everything into DB: invoke necessary repositories (postFieldsRelationRepository, blogPostRepository, postByTypeRepository)
-
-    return blogPostEntity;
+    // Implementation
   }
 
   public async updatePost(dto: BlogPostDto, postId: string) {
@@ -43,7 +31,13 @@ export class BlogPostService {
   }
 
   public async deletePost(postId: string) {
-    // Implementation
+    const existPost = await this.blogPostRepository.findById(postId);
+
+    if (!existPost) {
+      throw new ConflictException(POST_RECORD_NOT_FOUND);
+    }
+
+    await this.blogPostRepository.deleteById(postId);
   }
 
   public async addLike(postId: string) {

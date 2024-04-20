@@ -72,8 +72,8 @@ export class BlogPostController {
     description: PostsResponseMessage.PostNotFound,
   })
   @Delete('/:postId')
-  deletePost(@Param('postId') postId: string) {
-    // Implementation
+  public async deletePost(@Param('postId') postId: string) {
+    await this.blogPostsService.deletePost(postId);
   }
 
   @ApiResponse({

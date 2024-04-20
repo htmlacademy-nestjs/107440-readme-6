@@ -25,4 +25,23 @@ export class BlogPostRepository extends BasePostgresRepository<
 
     entity.id = record.id;
   }
+
+  public async findById(id: string): Promise<BlogPostEntity> {
+    const foundRecord = await this.client.post.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    // @ts-expect-error mismatch with string and enum
+    return this.createEntityFromDocument(foundRecord);
+  }
+
+  public async deleteById(id: string): Promise<void> {
+    await this.client.post.delete({
+      where: {
+        id,
+      },
+    });
+  }
 }
