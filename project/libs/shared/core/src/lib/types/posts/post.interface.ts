@@ -3,8 +3,8 @@ import { PostTypeEnum } from './post-type.enum';
 
 export interface BlogPost {
   id: string;
-  createdAt: string;
-  publishedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   state: PostStateEnum;
   tags?: string[];
   userId: string;

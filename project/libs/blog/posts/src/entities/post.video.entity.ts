@@ -1,11 +1,12 @@
-import { StorableEntity, PostVideo, Entity } from '@project/core';
+import { StorableEntity, PostVideo } from '@project/core';
+import { PostTypeRelationEntity } from './post-type.relation.entity';
 
 export class PostVideoEntity
-  extends Entity
+  extends PostTypeRelationEntity
   implements StorableEntity<PostVideo>
 {
-  public name: string;
-  public linkToVideo: string;
+  public title: string;
+  public videoUrl: string;
 
   constructor(post?: PostVideo) {
     super();
@@ -17,14 +18,18 @@ export class PostVideoEntity
       return;
     }
 
-    this.name = post.name;
-    this.linkToVideo = post.linkToVideo;
+    this.id = post.id ?? '';
+    this.title = post.title;
+    this.videoUrl = post.videoUrl;
+    this.postId = post.postId ?? '';
   }
 
   public toPOJO(): PostVideo {
     return {
-      name: this.name,
-      linkToVideo: this.linkToVideo,
+      id: this.id,
+      title: this.title,
+      videoUrl: this.videoUrl,
+      postId: this.postId,
     };
   }
 }

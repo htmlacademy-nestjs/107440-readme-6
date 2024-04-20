@@ -1,6 +1,10 @@
-import { StorableEntity, PostText, Entity } from '@project/core';
+import { StorableEntity, PostText } from '@project/core';
+import { PostTypeRelationEntity } from './post-type.relation.entity';
 
-export class PostTextEntity extends Entity implements StorableEntity<PostText> {
+export class PostTextEntity
+  extends PostTypeRelationEntity
+  implements StorableEntity<PostText>
+{
   public name: string;
   public announcement: string;
   public text: string;
@@ -19,6 +23,7 @@ export class PostTextEntity extends Entity implements StorableEntity<PostText> {
     this.name = post.name;
     this.announcement = post.announcement;
     this.text = post.text;
+    this.postId = post.postId ?? '';
   }
 
   public toPOJO(): PostText {
@@ -27,6 +32,7 @@ export class PostTextEntity extends Entity implements StorableEntity<PostText> {
       name: this.name,
       announcement: this.announcement,
       text: this.text,
+      postId: this.postId,
     };
   }
 }
