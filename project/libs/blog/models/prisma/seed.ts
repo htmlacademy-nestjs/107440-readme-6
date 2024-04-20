@@ -6,8 +6,12 @@ const FIRST_VIDEO_POST_UUID = '5c308040-96a2-4162-bea6-2338e9976555';
 const SECOND_POST_UUID = 'ab04593b-da99-4fe3-8b4b-e06d82e2efdd';
 const SECOND_VIDEO_POST_UUID = 'cb04593b-da99-4fe3-8b4b-e06d82e2efcc';
 
+const THIRD_POST_UUID = 'dv04593b-da99-4fe3-8b4b-e06d82e2efgg';
+const THIRD_PHOTO_POST_UUID = 'lk04593b-da99-4fe3-8b4b-e06d82e2efhh';
+
 const FIRST_USER_ID = '658170cbb954e9f5b905ccf4';
 const SECOND_USER_ID = '6581762309c030b503e30512';
+const THIRD_USER_ID = '6581762309c030b503e30518';
 
 function getPosts() {
   return [
@@ -22,11 +26,18 @@ function getPosts() {
       id: SECOND_POST_UUID,
       userId: FIRST_USER_ID,
       state: 'Published',
+      type: 'Video',
+      tags: [],
+    },
+    {
+      id: THIRD_POST_UUID,
+      userId: SECOND_USER_ID,
+      state: 'Published',
       type: 'Photo',
       comments: [
         {
           message: 'Looks amazing!',
-          userId: FIRST_USER_ID,
+          userId: THIRD_USER_ID,
         },
         {
           message: 'Nice',
@@ -50,6 +61,16 @@ function getVideoPosts() {
       title: 'My visit to NY',
       videoUrl: 'testUrl2',
       postId: SECOND_POST_UUID,
+    },
+  ];
+}
+
+function getPhotoPosts() {
+  return [
+    {
+      id: THIRD_PHOTO_POST_UUID,
+      photo: 'test photo data',
+      postId: THIRD_POST_UUID,
     },
   ];
 }
@@ -81,6 +102,18 @@ async function seedDb(prismaClient: PrismaClient) {
         id: post.id,
         title: post.title,
         videoUrl: post.videoUrl,
+        postId: post.postId,
+      },
+    });
+  }
+
+  const mockPhotoPosts = getPhotoPosts();
+
+  for (const post of mockPhotoPosts) {
+    await prismaClient.photoPost.create({
+      data: {
+        id: post.id,
+        photo: post.photo,
         postId: post.postId,
       },
     });
