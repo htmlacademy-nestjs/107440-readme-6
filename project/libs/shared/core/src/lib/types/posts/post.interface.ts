@@ -1,11 +1,12 @@
 import { PostStateEnum } from './post-state.enum';
+import { PostTypeEnum } from './post-type.enum';
 
 export interface BlogPost {
-  id?: string;
+  id: string;
   createdAt: string;
   publishedAt: string;
   state: PostStateEnum;
   tags?: string[];
-  authorId?: string;
-  postFieldsId?: string; // For each post type there is a separate table with all needed fields.
+  userId: string;
+  type: PostTypeEnum;
 }
