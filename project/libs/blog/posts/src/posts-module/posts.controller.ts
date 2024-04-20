@@ -19,7 +19,7 @@ import { PostsResponseMessage } from './posts.constant';
 @Controller('posts')
 export class BlogPostController {
   constructor(
-    private blogPostRepository: BlogPostRepository,
+    private blogPostsRepository: BlogPostRepository,
     private blogPostsService: BlogPostService
   ) {}
   @ApiResponse({
