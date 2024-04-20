@@ -1,26 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { PostStateEnum } from '@project/core';
 
-import {
-  BlogPostRepository,
-  PostFieldsRelationsRepository,
-} from '../repositories';
+import { BlogPostRepository } from '../repositories';
 import { BlogPostDto } from '../dto';
 import { BlogPostEntity } from '../entities';
-import {
-  BlogPostFactory,
-  PostFieldsRelationFactory,
-  PostTypesFactory,
-} from '../factories';
+import { BlogPostFactory, PostTypesFactory } from '../factories';
 
 @Injectable()
 export class BlogPostService {
   constructor(
     private blogPostRepository: BlogPostRepository,
     private blogPostFactory: BlogPostFactory,
-    private postTypesFactory: PostTypesFactory,
-    private postFieldsRelationFactory: PostFieldsRelationFactory,
-    private postFieldsRelationRepository: PostFieldsRelationsRepository
+    private postTypesFactory: PostTypesFactory
   ) {}
   public async createPost(dto: BlogPostDto): Promise<BlogPostEntity> {
     const { type, postFields } = dto;
@@ -41,15 +32,6 @@ export class BlogPostService {
       postFields,
       type
     );
-
-    const relationData = {
-      postId: blogPostEntity.id,
-      postFieldsId: postByTypeEntity.id,
-      type,
-    };
-
-    const postFieldsRelationEntity =
-      this.postFieldsRelationFactory.create(relationData);
 
     // 2. Save everything into DB: invoke necessary repositories (postFieldsRelationRepository, blogPostRepository, postByTypeRepository)
 
