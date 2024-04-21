@@ -1,3 +1,4 @@
 export interface PostFields {
-  id?: string;
+  id: string; // One-to-one relation with Post model
+  postId: string;
 }

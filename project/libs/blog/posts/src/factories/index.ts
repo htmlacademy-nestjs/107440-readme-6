@@ -7,5 +7,3 @@ export { PostVideoFactory } from './post-video.factory';
 export { BlogPostFactory } from './post.factory';
 
 export { PostTypesFactory } from './post-types.factory';
-
-export { PostFieldsRelationFactory } from './post-fields.relation.factory';

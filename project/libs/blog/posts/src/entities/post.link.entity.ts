@@ -1,6 +1,10 @@
-import { StorableEntity, PostLink, Entity } from '@project/core';
+import { StorableEntity, PostLink } from '@project/core';
+import { PostTypeRelationEntity } from './post-type.relation.entity';
 
-export class PostLinkEntity extends Entity implements StorableEntity<PostLink> {
+export class PostLinkEntity
+  extends PostTypeRelationEntity
+  implements StorableEntity<PostLink>
+{
   public link: string;
   public description: string;
 
@@ -17,6 +21,7 @@ export class PostLinkEntity extends Entity implements StorableEntity<PostLink> {
     this.id = post.id ?? '';
     this.link = post.link;
     this.description = post.description;
+    this.postId = post.postId ?? '';
   }
 
   public toPOJO(): PostLink {
@@ -24,6 +29,7 @@ export class PostLinkEntity extends Entity implements StorableEntity<PostLink> {
       id: this.id,
       link: this.link,
       description: this.description,
+      postId: this.postId,
     };
   }
 }

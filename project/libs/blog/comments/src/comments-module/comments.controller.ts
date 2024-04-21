@@ -6,13 +6,18 @@ import {
   Query,
   Get,
   HttpStatus,
+  Body,
 } from '@nestjs/common';
 import { ApiTags, ApiResponse } from '@nestjs/swagger';
-import { CommentsResponseMessage } from './comment.constant';
+
+import { CommentsResponseMessage } from './comments.constant';
+import { CommentsService } from './comments.service';
+import { CreateCommentDto } from '../dto/create-comment.dto';
 
 @ApiTags('comments')
 @Controller('comments')
 export class CommentsController {
+  constructor(private commentsService: CommentsService) {}
   @ApiResponse({
     status: HttpStatus.OK,
     description: CommentsResponseMessage.CommentsFound,
@@ -39,8 +44,15 @@ export class CommentsController {
     description: CommentsResponseMessage.PostNotFound,
   })
   @Post('/post/:postId')
-  createComment(@Param('postId') postId: string) {
-    // Implementation
+  public async createComment(
+    @Param('postId') postId: string,
+    @Body() commentDto: CreateCommentDto
+  ) {
+    const newComment = await this.commentsService.createComment(
+      commentDto,
+      postId
+    );
+    //return fillDto(CommentRdo, newComment.toPOJO());
   }
 
   @ApiResponse({
@@ -51,11 +63,8 @@ export class CommentsController {
     status: HttpStatus.NOT_FOUND,
     description: CommentsResponseMessage.PostOrCommentNotFound,
   })
-  @Delete('/:commentId/post/:postId')
-  deleteComment(
-    @Param('postId') commentId: string,
-    @Param('postId') postId: string
-  ) {
-    // Implementation
+  @Delete('/:commentId')
+  public async deleteComment(@Param('commentId') commentId: string) {
+    await this.commentsService.deleteComment(commentId);
   }
 }

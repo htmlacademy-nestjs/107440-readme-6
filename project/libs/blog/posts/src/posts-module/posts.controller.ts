@@ -19,7 +19,7 @@ import { PostsResponseMessage } from './posts.constant';
 @Controller('posts')
 export class BlogPostController {
   constructor(
-    private blogPostRepository: BlogPostRepository,
+    private blogPostsRepository: BlogPostRepository,
     private blogPostsService: BlogPostService
   ) {}
   @ApiResponse({
@@ -72,8 +72,8 @@ export class BlogPostController {
     description: PostsResponseMessage.PostNotFound,
   })
   @Delete('/:postId')
-  deletePost(@Param('postId') postId: string) {
-    // Implementation
+  public async deletePost(@Param('postId') postId: string) {
+    await this.blogPostsService.deletePost(postId);
   }
 
   @ApiResponse({

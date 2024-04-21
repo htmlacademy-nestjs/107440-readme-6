@@ -1,12 +1,18 @@
-import { BlogPost, Entity, PostStateEnum, StorableEntity } from '@project/core';
+import {
+  BlogPost,
+  Entity,
+  PostStateEnum,
+  PostTypeEnum,
+  StorableEntity,
+} from '@project/core';
 
 export class BlogPostEntity extends Entity implements StorableEntity<BlogPost> {
-  public createdAt: string;
-  public publishedAt: string;
+  public createdAt: Date;
+  public updatedAt: Date;
   public description: string;
-  public authorId: string;
-  public postFieldsId: string;
+  public userId: string;
   public state: PostStateEnum;
+  public type: PostTypeEnum;
 
   constructor(post?: BlogPost) {
     super();
@@ -19,21 +25,21 @@ export class BlogPostEntity extends Entity implements StorableEntity<BlogPost> {
     }
 
     this.id = post.id ?? '';
-    this.authorId = post.authorId;
+    this.userId = post.userId;
     this.state = post.state;
-    this.createdAt = post.createdAt;
-    this.publishedAt = post.publishedAt;
-    this.postFieldsId = post.postFieldsId;
+    this.createdAt = post.createdAt ?? undefined;
+    this.updatedAt = post.updatedAt ?? undefined;
+    this.type = post.type;
   }
 
   public toPOJO(): BlogPost {
     return {
       id: this.id,
       createdAt: this.createdAt,
-      publishedAt: this.publishedAt,
+      updatedAt: this.updatedAt,
       state: this.state,
-      authorId: this.authorId,
-      postFieldsId: this.postFieldsId,
+      userId: this.userId,
+      type: this.type,
     };
   }
 }

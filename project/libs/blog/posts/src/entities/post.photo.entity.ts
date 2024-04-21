@@ -1,7 +1,8 @@
-import { StorableEntity, PostPhoto, Entity } from '@project/core';
+import { StorableEntity, PostPhoto } from '@project/core';
+import { PostTypeRelationEntity } from './post-type.relation.entity';
 
 export class PostPhotoEntity
-  extends Entity
+  extends PostTypeRelationEntity
   implements StorableEntity<PostPhoto>
 {
   public photo: string;
@@ -18,12 +19,14 @@ export class PostPhotoEntity
 
     this.id = post.id ?? '';
     this.photo = post.photo;
+    this.postId = post.postId ?? '';
   }
 
   public toPOJO(): PostPhoto {
     return {
       id: this.id,
       photo: this.photo,
+      postId: this.postId,
     };
   }
 }

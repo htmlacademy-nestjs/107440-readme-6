@@ -4,6 +4,7 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthenticationService } from './authentication.service';
 import { SignUpUserDto } from '../dto/signup-user.dto';
 import { SignInUserDto } from '../dto/signin-user.dto';
+import { ChangePasswordDto } from '../dto/change-password.dto';
 
 import { LoggedUserRdo } from '../rdo/logged-user.rdo';
 import { UserRdo } from '../rdo/user.rdo';
@@ -56,5 +57,19 @@ export class AuthenticationController {
   public async show(@Param('id') id: string) {
     const existUser = await this.authService.getUserById(id);
     return existUser.toPOJO();
+  }
+
+  @ApiResponse({
+    type: UserRdo,
+    status: HttpStatus.OK,
+    description: AuthenticationResponseMessage.UserFound,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: AuthenticationResponseMessage.UserNotFound,
+  })
+  @Post('/changePassword')
+  public async changePassword(@Body() dto: ChangePasswordDto) {
+    // Implementation
   }
 }

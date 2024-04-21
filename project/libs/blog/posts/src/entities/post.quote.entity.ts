@@ -1,7 +1,8 @@
-import { StorableEntity, PostQuote, Entity } from '@project/core';
+import { StorableEntity, PostQuote } from '@project/core';
+import { PostTypeRelationEntity } from './post-type.relation.entity';
 
 export class PostQuoteEntity
-  extends Entity
+  extends PostTypeRelationEntity
   implements StorableEntity<PostQuote>
 {
   public text: string;
@@ -20,6 +21,7 @@ export class PostQuoteEntity
     this.id = post.id ?? '';
     this.text = post.text;
     this.author = post.author;
+    this.postId = post.postId ?? '';
   }
 
   public toPOJO(): PostQuote {
@@ -27,6 +29,7 @@ export class PostQuoteEntity
       id: this.id,
       author: this.author,
       text: this.text,
+      postId: this.postId,
     };
   }
 }

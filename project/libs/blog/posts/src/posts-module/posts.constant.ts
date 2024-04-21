@@ -1,4 +1,6 @@
-export const POSTS_RECORD_NOT_FOUND = 'Post is not found';
+export const POST_RECORD_NOT_FOUND = 'Post is not found';
+export const POST_TYPE_IS_INCORRECT = 'Post type is incorrect';
+export const POST_TYPE_DATA_IS_NOT_PROVIDED = 'Post type data is not provided';
 
 export const PostsResponseMessage = {
   PostsFound: 'Posts found',

@@ -6,4 +6,4 @@ export { PostQuoteEntity } from './post.quote.entity';
 
 export { BlogPostEntity } from './post.entity';
 
-export { PostFieldsRelationEntity } from './post-fields.relation.entity';
+export { PostTypeRelationEntity } from './post-type.relation.entity';

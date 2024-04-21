@@ -16,6 +16,20 @@ services:
     volumes:
       - readme.mongo.account:/data/db
 
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'mongo',
+          '--quiet',
+          '--eval',
+          "printjson(db.adminCommand('ping'))",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
   readme.account.mongo.ui:
     image: mongo-express:1.0.2-20
     restart: always
