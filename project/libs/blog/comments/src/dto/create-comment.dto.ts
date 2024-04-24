@@ -1,9 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import { CommentsValidationMessage } from '../comments-module/comments.constant';
 
 export class CreateCommentDto {
-  @ApiProperty({
-    description: 'Comment message name',
-    example: 'flowers',
-  })
+  @IsString()
+  @IsNotEmpty({ message: CommentsValidationMessage.MessageIsEmpty })
   public message: string;
+
+  @IsString()
+  @IsMongoId({ message: CommentsValidationMessage.InvalidID })
+  public userId: string;
 }

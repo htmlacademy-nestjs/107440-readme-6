@@ -8,14 +8,16 @@ import {
   HttpStatus,
   Body,
 } from '@nestjs/common';
-import { ApiTags, ApiResponse } from '@nestjs/swagger';
+import { ApiResponse } from '@nestjs/swagger';
+
+import { fillDto } from '@project/helpers';
 
 import { CommentsResponseMessage } from './comments.constant';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from '../dto/create-comment.dto';
+import { CommentRdo } from '../rdo/comment.rdo';
 
-@ApiTags('comments')
-@Controller('comments')
+@Controller('posts/:postId/comments')
 export class CommentsController {
   constructor(private commentsService: CommentsService) {}
   @ApiResponse({
@@ -26,13 +28,17 @@ export class CommentsController {
     status: HttpStatus.NOT_FOUND,
     description: CommentsResponseMessage.PostNotFound,
   })
-  @Get('/post/:postId')
-  getComments(
+  @Get('/')
+  public async getComments(
     @Param('postId') postId: string,
     @Query('offset') offset: number,
     @Query('limit') limit: number
   ) {
-    // Implementation
+    const comments = await this.commentsService.getComments(postId);
+    return fillDto(
+      CommentRdo,
+      comments.map((comment) => comment.toPOJO())
+    );
   }
 
   @ApiResponse({
@@ -43,16 +49,13 @@ export class CommentsController {
     status: HttpStatus.NOT_FOUND,
     description: CommentsResponseMessage.PostNotFound,
   })
-  @Post('/post/:postId')
+  @Post('/')
   public async createComment(
     @Param('postId') postId: string,
-    @Body() commentDto: CreateCommentDto
+    @Body() dto: CreateCommentDto
   ) {
-    const newComment = await this.commentsService.createComment(
-      commentDto,
-      postId
-    );
-    //return fillDto(CommentRdo, newComment.toPOJO());
+    const newComment = await this.commentsService.createComment(postId, dto);
+    return fillDto(CommentRdo, newComment.toPOJO());
   }
 
   @ApiResponse({

@@ -4,7 +4,7 @@ export class CommentEntity extends Entity implements StorableEntity<Comment> {
   public createdAt: Date;
   public updatedAt: Date;
   public message: string;
-  public postId: string;
+  public postId?: string;
   public userId: string;
 
   constructor(comment?: Comment) {
@@ -17,8 +17,8 @@ export class CommentEntity extends Entity implements StorableEntity<Comment> {
       return;
     }
 
-    this.id = comment.id ?? '';
-    this.postId = comment.postId;
+    this.id = comment.id ?? undefined;
+    this.postId = comment.postId ?? undefined;
     this.message = comment.message;
     this.createdAt = comment.createdAt ?? undefined;
     this.updatedAt = comment.updatedAt ?? undefined;
