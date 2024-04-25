@@ -11,7 +11,7 @@ export class UpdatePostDto {
   public tags?: string[];
 
   @IsNotEmpty()
-  public postFields: UpdatePostLinkDto &
+  public postTypeFields: UpdatePostLinkDto &
     UpdatePostTextDto &
     UpdatePostQuoteDto &
     UpdatePostVideoDto &

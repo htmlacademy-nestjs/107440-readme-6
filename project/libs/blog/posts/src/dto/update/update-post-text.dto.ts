@@ -4,7 +4,7 @@ export class UpdatePostTextDto {
   @IsString()
   @IsNotEmpty()
   @IsOptional()
-  public name?: string;
+  public title?: string;
 
   @IsString()
   @IsNotEmpty()

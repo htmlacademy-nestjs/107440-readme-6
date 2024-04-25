@@ -28,7 +28,7 @@ export class BlogPostDto {
   public tags?: string[];
 
   @IsNotEmpty()
-  public postFields: PostLinkDto &
+  public postTypeFields: PostLinkDto &
     PostTextDto &
     PostQuoteDto &
     PostVideoDto &

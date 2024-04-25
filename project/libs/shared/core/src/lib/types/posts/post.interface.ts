@@ -1,11 +1,11 @@
-import { PostStateEnum } from './post-state.enum';
-import { PostTypeEnum } from './post-type.enum';
+import { PostStateEnum } from './enums/post-state.enum';
+import { PostTypeEnum } from './enums/post-type.enum';
 
 export interface BlogPost {
-  id: string;
+  id?: string;
   createdAt?: Date;
   updatedAt?: Date;
-  state: PostStateEnum;
+  state?: PostStateEnum;
   tags?: string[];
   userId: string;
   type: PostTypeEnum;

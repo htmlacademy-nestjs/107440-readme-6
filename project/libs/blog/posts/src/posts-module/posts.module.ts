@@ -3,7 +3,7 @@ import { PrismaClientModule } from '@project/blog-models';
 
 import { BlogPostController } from './posts.controller';
 import { BlogPostService } from './posts.service';
-import { BlogPostRepository } from '../repositories';
+import { BlogPostRepository, PostTypesRepository } from '../repositories';
 import { BlogPostFactory, PostTypesFactory } from '../factories';
 
 @Module({
@@ -14,6 +14,7 @@ import { BlogPostFactory, PostTypesFactory } from '../factories';
     BlogPostRepository,
     BlogPostFactory,
     PostTypesFactory,
+    PostTypesRepository,
   ],
 })
 export class PostsModule {}

@@ -1,6 +1,12 @@
+import { SortDirection } from '@project/core';
+
 export const POST_RECORD_NOT_FOUND = 'Post is not found';
 export const POST_TYPE_IS_INCORRECT = 'Post type is incorrect';
 export const POST_TYPE_DATA_IS_NOT_PROVIDED = 'Post type data is not provided';
+
+export const DEFAULT_POST_COUNT_LIMIT = 10;
+export const DEFAULT_SORT_DIRECTION = SortDirection.Desc;
+export const DEFAULT_PAGE_COUNT = 1;
 
 export const PostsResponseMessage = {
   PostsFound: 'Posts found',

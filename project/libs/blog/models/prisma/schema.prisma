@@ -29,7 +29,7 @@ model Post {
 
   // Each post can have only one type
   videoPost VideoPost?
-  PhotoPost PhotoPost?
+  photoPost PhotoPost?
 
   @@index([id])
   @@map("posts")

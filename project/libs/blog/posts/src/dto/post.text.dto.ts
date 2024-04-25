@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class PostTextDto {
   @IsString()
   @IsNotEmpty()
-  public name: string;
+  public title: string;
 
   @IsString()
   @IsNotEmpty()
