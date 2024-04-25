@@ -1,6 +1,15 @@
+import { IsNotEmpty, IsString } from 'class-validator';
+
 export class PostTextDto {
+  @IsString()
+  @IsNotEmpty()
   public name: string;
+
+  @IsString()
+  @IsNotEmpty()
   public announcement: string;
+
+  @IsString()
+  @IsNotEmpty()
   public text: string;
-  public tags?: string[];
 }

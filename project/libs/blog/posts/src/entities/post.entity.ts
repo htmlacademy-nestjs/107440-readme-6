@@ -7,9 +7,8 @@ import {
 } from '@project/core';
 
 export class BlogPostEntity extends Entity implements StorableEntity<BlogPost> {
-  public createdAt: Date;
-  public updatedAt: Date;
-  public description: string;
+  public createdAt?: Date;
+  public updatedAt?: Date;
   public userId: string;
   public state: PostStateEnum;
   public type: PostTypeEnum;
@@ -24,7 +23,7 @@ export class BlogPostEntity extends Entity implements StorableEntity<BlogPost> {
       return;
     }
 
-    this.id = post.id ?? '';
+    this.id = post.id ?? undefined;
     this.userId = post.userId;
     this.state = post.state;
     this.createdAt = post.createdAt ?? undefined;

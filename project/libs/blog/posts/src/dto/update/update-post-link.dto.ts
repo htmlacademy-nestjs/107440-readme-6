@@ -1,11 +1,13 @@
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class PostLinkDto {
+export class UpdatePostLinkDto {
   @IsString()
   @IsNotEmpty()
-  public link: string;
+  @IsOptional()
+  public link?: string;
 
   @IsString()
+  @IsNotEmpty()
   @IsOptional()
   public description?: string;
 }
