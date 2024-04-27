@@ -19,11 +19,11 @@ export class PostTextEntity
       return;
     }
 
-    this.id = post.id ?? '';
+    this.id = post.id ?? undefined;
     this.title = post.title;
     this.announcement = post.announcement;
     this.text = post.text;
-    this.postId = post.postId ?? '';
+    this.postId = post.postId ?? undefined;
   }
 
   public toPOJO(): PostText {

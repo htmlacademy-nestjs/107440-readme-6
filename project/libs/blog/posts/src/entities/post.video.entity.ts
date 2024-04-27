@@ -18,10 +18,10 @@ export class PostVideoEntity
       return;
     }
 
-    this.id = post.id ?? '';
+    this.id = post.id ?? undefined;
     this.title = post.title;
     this.videoUrl = post.videoUrl;
-    this.postId = post.postId ?? '';
+    this.postId = post.postId ?? undefined;
   }
 
   public toPOJO(): PostVideo {

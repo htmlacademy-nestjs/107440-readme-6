@@ -18,10 +18,10 @@ export class PostLinkEntity
       return;
     }
 
-    this.id = post.id ?? '';
+    this.id = post.id ?? undefined;
     this.link = post.link;
     this.description = post.description;
-    this.postId = post.postId ?? '';
+    this.postId = post.postId ?? undefined;
   }
 
   public toPOJO(): PostLink {

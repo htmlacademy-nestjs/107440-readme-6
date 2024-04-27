@@ -12,6 +12,8 @@ export class BlogPostEntity extends Entity implements StorableEntity<BlogPost> {
   public userId: string;
   public state?: PostStateEnum;
   public type: PostTypeEnum;
+  public likes: string[];
+  public tags?: string[];
 
   constructor(post?: BlogPost) {
     super();
@@ -25,11 +27,12 @@ export class BlogPostEntity extends Entity implements StorableEntity<BlogPost> {
 
     this.id = post.id ?? undefined;
     this.userId = post.userId;
-    this.state = post.state ?? undefined;
     this.createdAt = post.createdAt ?? undefined;
     this.updatedAt = post.updatedAt ?? undefined;
     this.type = post.type;
     this.state = post.state ?? PostStateEnum.Published;
+    this.likes = post.likes;
+    this.tags = post.tags ?? undefined;
   }
 
   public toPOJO(): BlogPost {
@@ -40,6 +43,8 @@ export class BlogPostEntity extends Entity implements StorableEntity<BlogPost> {
       state: this.state,
       userId: this.userId,
       type: this.type,
+      likes: this.likes,
+      tags: this.tags,
     };
   }
 }
