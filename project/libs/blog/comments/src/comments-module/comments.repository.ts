@@ -20,6 +20,7 @@ export class CommentsRepository extends BasePostgresRepository<
   }
 
   public async save(entity: CommentEntity): Promise<void> {
+    console.log('entity - ', entity);
     const record = await this.client.comment.create({
       data: { ...entity.toPOJO() },
     });

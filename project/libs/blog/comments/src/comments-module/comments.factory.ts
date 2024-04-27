@@ -14,6 +14,8 @@ export class CommentFactory implements EntityFactory<CommentEntity> {
     postId: string
   ): CommentEntity {
     const entity = new CommentEntity();
+
+    entity.id = undefined;
     entity.postId = postId;
     entity.message = dto.message;
     entity.userId = dto.userId;
