@@ -18,22 +18,22 @@ function getPosts() {
     {
       id: FIRST_POST_UUID,
       userId: FIRST_USER_ID,
-      state: 'Draft',
-      type: 'Video',
+      state: 'draft',
+      type: 'video',
       tags: [],
     },
     {
       id: SECOND_POST_UUID,
       userId: FIRST_USER_ID,
-      state: 'Published',
-      type: 'Video',
+      state: 'published',
+      type: 'video',
       tags: [],
     },
     {
       id: THIRD_POST_UUID,
       userId: SECOND_USER_ID,
-      state: 'Published',
-      type: 'Photo',
+      state: 'published',
+      type: 'photo',
       comments: [
         {
           message: 'Looks amazing!',
