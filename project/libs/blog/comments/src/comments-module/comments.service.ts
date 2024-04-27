@@ -1,12 +1,9 @@
-import {
-  ConflictException,
-  Injectable,
-  NotImplementedException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CommentsRepository } from './comments.repository';
 import { COMMENT_RECORD_NOT_FOUND } from './comments.constant';
 import { CreateCommentDto } from '../dto/create-comment.dto';
 import { CommentEntity } from './comments.entity';
+import { CommentFactory } from './comments.factory';
 
 @Injectable()
 export class CommentsService {
@@ -15,7 +12,11 @@ export class CommentsService {
     postId: string,
     dto: CreateCommentDto
   ): Promise<CommentEntity> {
-    throw new NotImplementedException();
+    const newComment = CommentFactory.createFromCreateCommentDto(dto, postId);
+
+    await this.commentsRepository.save(newComment);
+
+    return newComment;
   }
   public getComments(postId: string): Promise<CommentEntity[]> {
     return this.commentsRepository.findByPostId(postId);

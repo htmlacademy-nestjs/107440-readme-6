@@ -10,5 +10,6 @@ import { CommentFactory } from './comments.factory';
   imports: [PrismaClientModule],
   controllers: [CommentsController],
   providers: [CommentsService, CommentsRepository, CommentFactory],
+  exports: [CommentsRepository, CommentFactory],
 })
 export class CommentsModule {}

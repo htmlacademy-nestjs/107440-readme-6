@@ -25,6 +25,8 @@ export class CommentsRepository extends BasePostgresRepository<
     });
 
     entity.id = record.id;
+    entity.createdAt = record.createdAt;
+    entity.updatedAt = record.updatedAt;
   }
 
   public async findById(id: string): Promise<CommentEntity> {
