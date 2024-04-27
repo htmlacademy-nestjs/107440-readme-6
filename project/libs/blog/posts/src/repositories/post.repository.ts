@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { BasePostgresRepository } from '@project/data-access';
 import { PrismaClientService } from '@project/blog-models';
+import { BlogPost } from '@project/core';
 
 import { BlogPostFactory } from '../factories';
 import { BlogPostEntity } from '../entities';
-import { BlogPost } from '@project/core';
 
 @Injectable()
 export class BlogPostRepository extends BasePostgresRepository<
@@ -18,22 +19,40 @@ export class BlogPostRepository extends BasePostgresRepository<
     super(entityFactory, client);
   }
 
-  public async save(entity: BlogPostEntity): Promise<void> {
-    const record = await this.client.post.create({
-      data: { ...entity.toPOJO() },
-    });
-
-    entity.id = record.id;
+  private async getPostCount(where: Prisma.PostWhereInput): Promise<number> {
+    return this.client.post.count({ where });
   }
 
-  public async findById(id: string): Promise<BlogPostEntity> {
-    const foundRecord = await this.client.post.findUnique({
-      where: {
-        id,
+  private calculatePostsPage(totalCount: number, limit: number): number {
+    return Math.ceil(totalCount / limit);
+  }
+
+  public async save(entity: BlogPostEntity): Promise<void> {
+    const record = await this.client.post.create({
+      data: {
+        ...entity.toPOJO(),
+        comments: {
+          connect: [],
+        },
       },
     });
 
-    // @ts-expect-error mismatch with string and enum
+    entity.id = record.id;
+    entity.createdAt = record.createdAt;
+    entity.updatedAt = record.updatedAt;
+  }
+
+  public async findById(id: string): Promise<BlogPostEntity> {
+    const foundRecord = (await this.client.post.findUnique({
+      where: {
+        id,
+      },
+    })) as BlogPost;
+
+    if (!foundRecord) {
+      throw new NotFoundException(`Post with id ${id} not found.`);
+    }
+
     return this.createEntityFromDocument(foundRecord);
   }
 
