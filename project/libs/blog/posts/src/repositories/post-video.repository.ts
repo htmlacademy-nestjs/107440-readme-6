@@ -19,7 +19,6 @@ export class PostVideoRepository extends BasePostgresRepository<
   }
 
   public async save(entity: PostVideoEntity): Promise<void> {
-    console.log('Post Video repository, entity - ', entity);
     const record = await this.client.videoPost.create({
       data: { ...entity.toPOJO() },
     });

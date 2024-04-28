@@ -5,15 +5,33 @@ import {
   PostTypeEnum,
   StorableEntity,
 } from '@project/core';
+import { CommentEntity, CommentFactory } from '@project/comments';
+
+import { PostLinkEntity } from './post.link.entity';
+import { PostVideoEntity } from './post.video.entity';
+import { PostTextEntity } from './post.text.entity';
+import { PostPhotoEntity } from './post.photo.entity';
+import { PostQuoteEntity } from './post.quote.entity';
+import { PostTypesFactory } from '../factories';
+
+type PostTypeFields =
+  | PostVideoEntity
+  | PostLinkEntity
+  | PostTextEntity
+  | PostPhotoEntity
+  | PostQuoteEntity;
 
 export class BlogPostEntity extends Entity implements StorableEntity<BlogPost> {
   public createdAt?: Date;
   public updatedAt?: Date;
   public userId: string;
-  public state?: PostStateEnum;
+  public state: PostStateEnum;
   public type: PostTypeEnum;
   public likes: string[];
   public tags?: string[];
+  public comments?: CommentEntity[];
+
+  public postTypeFields?: PostTypeFields;
 
   constructor(post?: BlogPost) {
     super();
@@ -33,6 +51,20 @@ export class BlogPostEntity extends Entity implements StorableEntity<BlogPost> {
     this.state = post.state ?? PostStateEnum.Published;
     this.likes = post.likes;
     this.tags = post.tags ?? undefined;
+    this.comments = [];
+
+    this.postTypeFields = post.postTypeFields
+      ? new PostTypesFactory().createPostByType(post.postTypeFields, post.type)
+      : undefined;
+
+    if (post.comments) {
+      const blogCommentFactory = new CommentFactory();
+
+      for (const comment of post.comments) {
+        const blogCommentEntity = blogCommentFactory.create(comment);
+        this.comments.push(blogCommentEntity);
+      }
+    }
   }
 
   public toPOJO(): BlogPost {
@@ -45,6 +77,8 @@ export class BlogPostEntity extends Entity implements StorableEntity<BlogPost> {
       type: this.type,
       likes: this.likes,
       tags: this.tags,
+      postTypeFields: this.postTypeFields?.toPOJO(),
+      comments: this.comments.map((commentEntity) => commentEntity.toPOJO()),
     };
   }
 }

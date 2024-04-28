@@ -10,10 +10,13 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ApiTags, ApiResponse } from '@nestjs/swagger';
+import { fillDto } from '@project/helpers';
+
 import { BlogPostDto } from '../dto';
 import { BlogPostRepository } from '../repositories/post.repository';
 import { BlogPostService } from './posts.service';
 import { PostsResponseMessage } from './posts.constant';
+import { BlogPostRdo } from '../rdo/blog-post.rdo';
 
 @ApiTags('posts')
 @Controller('posts')
@@ -45,9 +48,9 @@ export class BlogPostController {
     description: PostsResponseMessage.PostCreated,
   })
   @Post()
-  createPost(@Body() blogPostDto: BlogPostDto) {
-    const blogPost = this.blogPostsService.createPost(blogPostDto);
-    return blogPost;
+  public async createPost(@Body() blogPostDto: BlogPostDto) {
+    const blogPostFull = await this.blogPostsService.createPost(blogPostDto);
+    return fillDto(BlogPostRdo, blogPostFull.toPOJO());
   }
 
   @ApiResponse({
@@ -130,5 +133,11 @@ export class BlogPostController {
   @Get('/search')
   searchPostsByTitle(@Query('title') title: string) {
     // Implementation
+  }
+
+  @Get('/:postId')
+  public async getPost(@Param('postId') postId: string) {
+    const post = await this.blogPostsService.getPost(postId);
+    return fillDto(BlogPostRdo, post.toPOJO());
   }
 }

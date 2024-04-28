@@ -1,4 +1,4 @@
-import { PostStateEnum, PostTypeEnum } from '@project/core';
+import { PostStateEnum, PostTypeEnum, Comment } from '@project/core';
 import { Expose } from 'class-transformer';
 
 export class BlogPostRdo {
@@ -21,14 +21,14 @@ export class BlogPostRdo {
   public userId: string;
 
   @Expose()
-  public likes: number;
+  public likes?: number;
+
+  @Expose()
+  public tags?: string[];
+
+  @Expose()
+  public postTypeFields: unknown;
 
   @Expose()
   public comments: Comment[];
-
-  @Expose()
-  public tags: string[];
-
-  @Expose()
-  public postTypeId: string;
 }

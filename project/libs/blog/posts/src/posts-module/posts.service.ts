@@ -1,29 +1,60 @@
-import { ConflictException, Injectable } from '@nestjs/common';
-import { PostTypeEnum } from '@project/core';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
-import { BlogPostRepository } from '../repositories';
+import { BlogPostRepository, PostTypesRepository } from '../repositories';
 import { BlogPostDto } from '../dto';
 import {
-  POST_RECORD_NOT_FOUND,
   POST_TYPE_DATA_IS_NOT_PROVIDED,
   POST_TYPE_IS_INCORRECT,
 } from './posts.constant';
+import { BlogPostFactory, PostTypesFactory } from '../factories';
+import { BlogPostEntity } from '../entities';
 
 @Injectable()
 export class BlogPostService {
-  constructor(private blogPostRepository: BlogPostRepository) {}
-  public async createPost(dto: BlogPostDto): Promise<void> {
-    const { type, postFields } = dto;
+  constructor(
+    private blogPostRepository: BlogPostRepository,
+    private blogPostFactory: BlogPostFactory,
+    private postTypesRepository: PostTypesRepository,
+    private postTypesFactory: PostTypesFactory
+  ) {}
+  public async createPost(dto: BlogPostDto): Promise<BlogPostEntity> {
+    const { type } = dto;
 
-    if (!type || !(type in PostTypeEnum)) {
+    const { postTypeFields, ...restFields } = dto;
+
+    if (!type) {
       throw new ConflictException(POST_TYPE_IS_INCORRECT);
     }
 
-    if (!postFields) {
+    if (!postTypeFields) {
       throw new ConflictException(POST_TYPE_DATA_IS_NOT_PROVIDED);
     }
 
-    // Implementation
+    const newPost = this.blogPostFactory.create(restFields);
+
+    await this.blogPostRepository.save(newPost);
+
+    const postTypeRepository =
+      this.postTypesRepository.getRepositoryInstance(type);
+
+    const newPostType = this.postTypesFactory.createPostByType(
+      {
+        ...postTypeFields,
+        postId: newPost.id,
+      },
+      type
+    );
+
+    //@ts-expect-error types
+    await postTypeRepository.save(newPostType);
+
+    newPost.postTypeFields = newPostType;
+
+    return newPost;
   }
 
   public async updatePost(dto: BlogPostDto, postId: string) {
@@ -31,13 +62,11 @@ export class BlogPostService {
   }
 
   public async deletePost(postId: string) {
-    const existPost = await this.blogPostRepository.findById(postId);
-
-    if (!existPost) {
-      throw new ConflictException(POST_RECORD_NOT_FOUND);
+    try {
+      await this.blogPostRepository.deleteById(postId);
+    } catch {
+      throw new NotFoundException(`Post with ID ${postId} not found`);
     }
-
-    await this.blogPostRepository.deleteById(postId);
   }
 
   public async addLike(postId: string) {
@@ -58,5 +87,9 @@ export class BlogPostService {
 
   public async searchPostsByTitle(title: string) {
     // Implementation
+  }
+
+  public async getPost(postId: string): Promise<BlogPostEntity> {
+    return this.blogPostRepository.findById(postId);
   }
 }

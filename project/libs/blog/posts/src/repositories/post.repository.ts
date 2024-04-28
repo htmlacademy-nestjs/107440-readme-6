@@ -28,9 +28,15 @@ export class BlogPostRepository extends BasePostgresRepository<
   }
 
   public async save(entity: BlogPostEntity): Promise<void> {
+    const pojoEntity = entity.toPOJO();
+
+    // this.client.post doesn't store postTypeFields in Prisma
+    delete pojoEntity.postTypeFields;
+
     const record = await this.client.post.create({
       data: {
-        ...entity.toPOJO(),
+        ...pojoEntity,
+        state: pojoEntity.state,
         comments: {
           connect: [],
         },
@@ -43,17 +49,34 @@ export class BlogPostRepository extends BasePostgresRepository<
   }
 
   public async findById(id: string): Promise<BlogPostEntity> {
-    const foundRecord = (await this.client.post.findUnique({
+    const postRecord = await this.client.post.findFirst({
       where: {
         id,
       },
-    })) as BlogPost;
+      include: {
+        videoPost: true,
+        photoPost: true,
+        comments: true,
+      },
+    });
 
-    if (!foundRecord) {
+    if (!postRecord) {
       throw new NotFoundException(`Post with id ${id} not found.`);
     }
 
-    return this.createEntityFromDocument(foundRecord);
+    const postTypeFieldsKey = `${postRecord.type}Post`;
+
+    const { videoPost, photoPost, comments, ...rest } = postRecord;
+
+    const postObj = {
+      ...rest,
+      comments,
+      postTypeFields: postRecord[postTypeFieldsKey],
+    };
+
+    const blogPost = this.createEntityFromDocument(postObj as BlogPost);
+
+    return blogPost;
   }
 
   public async deleteById(id: string): Promise<void> {
