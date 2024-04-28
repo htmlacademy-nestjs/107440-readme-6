@@ -13,12 +13,17 @@ export class CommentFactory implements EntityFactory<CommentEntity> {
     dto: CreateCommentDto,
     postId: string
   ): CommentEntity {
+    const currentDate = new Date();
+
     const entity = new CommentEntity();
 
     entity.id = undefined;
     entity.postId = postId;
     entity.message = dto.message;
     entity.userId = dto.userId;
+
+    entity.createdAt = currentDate;
+    entity.updatedAt = currentDate;
 
     return entity;
   }
