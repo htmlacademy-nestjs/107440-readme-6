@@ -9,9 +9,11 @@ import { BlogPostDto } from '../dto';
 import {
   POST_TYPE_DATA_IS_NOT_PROVIDED,
   POST_TYPE_IS_INCORRECT,
+  POST_TYPE_MISMATCH_ON_UPDATE,
 } from './posts.constant';
 import { BlogPostFactory, PostTypesFactory } from '../factories';
 import { BlogPostEntity } from '../entities';
+import { UpdatePostDto } from '../dto/update';
 
 @Injectable()
 export class BlogPostService {
@@ -57,8 +59,41 @@ export class BlogPostService {
     return newPost;
   }
 
-  public async updatePost(dto: BlogPostDto, postId: string) {
-    // Implementation
+  public async updatePost(dto: UpdatePostDto, postId: string) {
+    if (!dto.type) {
+      throw new ConflictException(POST_TYPE_IS_INCORRECT);
+    }
+
+    if (!dto.postTypeFields) {
+      throw new ConflictException(POST_TYPE_DATA_IS_NOT_PROVIDED);
+    }
+
+    const existsPost = await this.blogPostRepository.findById(postId);
+
+    if (dto.type !== existsPost.type) {
+      throw new ConflictException(POST_TYPE_MISMATCH_ON_UPDATE);
+    }
+
+    let hasPostTypeFieldsChanges = false;
+
+    for (const [key, value] of Object.entries(dto.postTypeFields)) {
+      if (
+        value !== undefined &&
+        key !== '' &&
+        existsPost.postTypeFields[key] !== value
+      ) {
+        existsPost.postTypeFields[key] = value;
+        hasPostTypeFieldsChanges = true;
+      }
+    }
+
+    if (!hasPostTypeFieldsChanges) {
+      return existsPost;
+    }
+
+    await this.blogPostRepository.update(existsPost);
+
+    return existsPost;
   }
 
   public async deletePost(postId: string) {

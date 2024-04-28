@@ -4,10 +4,10 @@ import {
   Delete,
   Param,
   Query,
-  Put,
   Get,
   Body,
   HttpStatus,
+  Patch,
 } from '@nestjs/common';
 import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { fillDto } from '@project/helpers';
@@ -17,6 +17,7 @@ import { BlogPostRepository } from '../repositories/post.repository';
 import { BlogPostService } from './posts.service';
 import { PostsResponseMessage } from './posts.constant';
 import { BlogPostRdo } from '../rdo/blog-post.rdo';
+import { UpdatePostDto } from '../dto/update';
 
 @ApiTags('posts')
 @Controller('posts')
@@ -61,9 +62,16 @@ export class BlogPostController {
     status: HttpStatus.NOT_FOUND,
     description: PostsResponseMessage.PostNotFound,
   })
-  @Put('/:postId')
-  updatePost(@Param('postId') postId: string) {
-    // Implementation
+  @Patch('/:postId')
+  public async updatePost(
+    @Param('postId') postId: string,
+    @Body() blogPostDto: UpdatePostDto
+  ) {
+    const updatedPost = await this.blogPostsService.updatePost(
+      blogPostDto,
+      postId
+    );
+    return fillDto(BlogPostRdo, updatedPost.toPOJO());
   }
 
   @ApiResponse({

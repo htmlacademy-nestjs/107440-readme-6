@@ -5,7 +5,7 @@ GET http://localhost:3000/api/posts HTTP/1.1
 
 # Get post by Id
 
-GET http://localhost:3000/api/posts/c4dab8a4-501c-479b-aeb9-7fab2ef2b083 HTTP/1.1
+GET http://localhost:3000/api/posts/cfc58b27-cc04-432d-8fcc-c4bfa5fc7a34 HTTP/1.1
 
 ###
 
@@ -18,8 +18,8 @@ Content-Type: application/json
   "type": "video",
   "userId": "12345",
   "postTypeFields": {
-    "title": "Test updated blog post entity",
-    "videoUrl": "Updated blog post entity url"
+    "title": "Test create a new post",
+    "videoUrl": "test url"
   }
 }
 
@@ -27,20 +27,20 @@ Content-Type: application/json
 
 # Delete a post by id
 
-DELETE http://localhost:3000/api/posts/c4dab8a4-501c-479b-aeb9-7fab2ef2b083 HTTP/1.1
+DELETE http://localhost:3000/api/posts/cfc58b27-cc04-432d-8fcc-c4bfa5fc7a34 HTTP/1.1
 
 ###
 
 # Update a post by id
 
-PATCH http://localhost:3000/api/posts/ab04593b-da99-4fe3-8b4b-e06d82e2efdd HTTP/1.1
+PATCH http://localhost:3000/api/posts/cfc58b27-cc04-432d-8fcc-c4bfa5fc7a34 HTTP/1.1
 Content-Type: application/json
 
 {
-  "type": "Video",
+  "type": "video",
   "postTypeFields": {
-    "videoUrl": "Updated video url",
-    "name": "Updated name for vide post"
+    "title": "Arsenal - Man City | Goals, highlights",
+    "videoUrl": "youtube.com/vide/12345"
   }
 }
 

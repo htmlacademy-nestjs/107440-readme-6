@@ -86,4 +86,31 @@ export class BlogPostRepository extends BasePostgresRepository<
       },
     });
   }
+
+  public async update(entity: BlogPostEntity): Promise<void> {
+    const pojoEntity = entity.toPOJO();
+
+    const { comments, postTypeFields, ...restFields } = pojoEntity;
+
+    const postTypeKey = `${pojoEntity.type}Post`;
+
+    const { postId, ...restPostTypeFields } = postTypeFields;
+
+    await this.client.post.update({
+      where: { id: entity.id },
+      data: {
+        ...restFields,
+        [postTypeKey]: {
+          update: {
+            ...restPostTypeFields,
+          },
+        },
+      },
+      include: {
+        videoPost: true,
+        photoPost: true,
+        comments: true,
+      },
+    });
+  }
 }
