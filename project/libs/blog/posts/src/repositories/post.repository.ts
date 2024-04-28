@@ -56,6 +56,9 @@ export class BlogPostRepository extends BasePostgresRepository<
       include: {
         videoPost: true,
         photoPost: true,
+        linkPost: true,
+        quotePost: true,
+        textPost: true,
         comments: true,
       },
     });
@@ -66,7 +69,15 @@ export class BlogPostRepository extends BasePostgresRepository<
 
     const postTypeFieldsKey = `${postRecord.type}Post`;
 
-    const { videoPost, photoPost, comments, ...rest } = postRecord;
+    const {
+      videoPost,
+      photoPost,
+      quotePost,
+      linkPost,
+      textPost,
+      comments,
+      ...rest
+    } = postRecord;
 
     const postObj = {
       ...rest,
@@ -109,6 +120,9 @@ export class BlogPostRepository extends BasePostgresRepository<
       include: {
         videoPost: true,
         photoPost: true,
+        linkPost: true,
+        quotePost: true,
+        textPost: true,
         comments: true,
       },
     });
