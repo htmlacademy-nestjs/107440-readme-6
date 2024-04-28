@@ -2,10 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { BasePostgresRepository } from '@project/data-access';
 import { PrismaClientService } from '@project/blog-models';
-import { BlogPost } from '@project/core';
+import { BlogPost, PaginationResult } from '@project/core';
 
 import { BlogPostFactory } from '../factories';
 import { BlogPostEntity } from '../entities';
+import { BlogPostQuery } from '../posts-module/posts.query';
 
 @Injectable()
 export class BlogPostRepository extends BasePostgresRepository<
@@ -126,5 +127,70 @@ export class BlogPostRepository extends BasePostgresRepository<
         comments: true,
       },
     });
+  }
+
+  public async find(
+    query?: BlogPostQuery
+  ): Promise<PaginationResult<BlogPostEntity>> {
+    const skip =
+      query?.page && query?.limit ? (query.page - 1) * query.limit : undefined;
+    const take = query?.limit;
+
+    const where: Prisma.PostWhereInput = {};
+    const orderBy: Prisma.PostOrderByWithRelationInput = {};
+
+    if (query?.type) {
+      where.type = query.type;
+    }
+
+    if (query?.sortDirection) {
+      orderBy.createdAt = query.sortDirection;
+    }
+
+    const [records, postCount] = await Promise.all([
+      this.client.post.findMany({
+        where,
+        orderBy,
+        skip,
+        take,
+        include: {
+          videoPost: true,
+          photoPost: true,
+          linkPost: true,
+          quotePost: true,
+          textPost: true,
+          comments: true,
+        },
+      }),
+      this.getPostCount(where),
+    ]);
+
+    return {
+      entities: records.map((record) => {
+        const postTypeFieldsKey = `${record.type}Post`;
+
+        const {
+          videoPost,
+          photoPost,
+          quotePost,
+          linkPost,
+          textPost,
+          comments,
+          ...rest
+        } = record;
+
+        const postObj = {
+          ...rest,
+          comments,
+          postTypeFields: record[postTypeFieldsKey],
+        };
+
+        return this.createEntityFromDocument(postObj as BlogPost);
+      }),
+      currentPage: query?.page,
+      totalPages: this.calculatePostsPage(postCount, take),
+      itemsPerPage: take,
+      totalItems: postCount,
+    };
   }
 }

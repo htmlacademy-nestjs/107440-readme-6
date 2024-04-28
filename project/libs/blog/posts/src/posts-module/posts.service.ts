@@ -14,6 +14,8 @@ import {
 import { BlogPostFactory, PostTypesFactory } from '../factories';
 import { BlogPostEntity } from '../entities';
 import { UpdatePostDto } from '../dto/update';
+import { BlogPostQuery } from './posts.query';
+import { PaginationResult } from '@project/core';
 
 @Injectable()
 export class BlogPostService {
@@ -112,8 +114,10 @@ export class BlogPostService {
     // Implementation
   }
 
-  public async getPosts() {
-    // Implementation
+  public async getAllPosts(
+    query?: BlogPostQuery
+  ): Promise<PaginationResult<BlogPostEntity>> {
+    return this.blogPostRepository.find(query);
   }
 
   public async getPostsByUserId(userId: string) {
