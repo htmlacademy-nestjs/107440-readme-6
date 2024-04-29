@@ -1,16 +1,17 @@
 import dayjs from 'dayjs';
 import {
   ConflictException,
-  Inject,
+  HttpException,
+  HttpStatus,
   Injectable,
+  Logger,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService, ConfigType } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 
 import { BlogUserRepository, BlogUserEntity } from '@project/blog-user';
-import { UserRole } from '@project/core';
-import { dbConfig } from '@project/account-config';
+import { UserRole, Token, TokenPayload, User } from '@project/core';
 
 import { SignUpUserDto } from '../dto/signup-user.dto';
 import { SignInUserDto } from '../dto/signin-user.dto';
@@ -22,14 +23,12 @@ import {
 
 @Injectable()
 export class AuthenticationService {
+  private readonly logger = new Logger(AuthenticationService.name);
+
   constructor(
     private readonly blogUserRepository: BlogUserRepository,
-    private readonly configService: ConfigService
-  ) {
-    // Извлекаем настройки из конфигурации
-    console.log(configService.get<string>('db.host'));
-    console.log(configService.get<string>('db.user'));
-  }
+    private readonly jwtService: JwtService
+  ) {}
 
   public async register(dto: SignUpUserDto): Promise<BlogUserEntity> {
     const { email, firstname, lastname, password, dateBirth } = dto;
@@ -80,5 +79,26 @@ export class AuthenticationService {
     }
 
     return user;
+  }
+
+  public async createUserToken(user: User): Promise<Token> {
+    const payload: TokenPayload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      lastname: user.lastname,
+      firstname: user.firstname,
+    };
+
+    try {
+      const accessToken = await this.jwtService.signAsync(payload);
+      return { accessToken };
+    } catch (error) {
+      this.logger.error('[Token generation error]: ' + error.message);
+      throw new HttpException(
+        'Token generation error',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 }
