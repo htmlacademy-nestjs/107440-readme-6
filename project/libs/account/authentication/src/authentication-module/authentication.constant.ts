@@ -1,6 +1,8 @@
 export const AUTH_USER_EXISTS = 'A user with this email already exists';
 export const AUTH_USER_NOT_FOUND = 'User is not found';
 export const AUTH_USER_PASSWORD_WRONG = 'User password is wrong';
+export const AUTH_CHANGE_USER_CURRENT_PASSWORD_WRONG =
+  'The current password is wrong';
 
 export const AuthenticationResponseMessage = {
   LoggedSuccess: 'User has been successfully logged.',
@@ -9,6 +11,7 @@ export const AuthenticationResponseMessage = {
   UserNotFound: 'User not found',
   UserExist: 'User with the email already exists',
   UserCreated: 'The new user has been successfully created.',
+  CurrentPasswordError: 'Tha passed current password is not correct',
 } as const;
 
 export const AuthenticationValidateMessage = {

@@ -15,7 +15,10 @@ import { UserRole, Token, TokenPayload, User } from '@project/core';
 
 import { SignUpUserDto } from '../dto/signup-user.dto';
 import { SignInUserDto } from '../dto/signin-user.dto';
+import { ChangePasswordDto } from '../dto/change-password.dto';
+
 import {
+  AUTH_CHANGE_USER_CURRENT_PASSWORD_WRONG,
   AUTH_USER_EXISTS,
   AUTH_USER_NOT_FOUND,
   AUTH_USER_PASSWORD_WRONG,
@@ -51,7 +54,7 @@ export class AuthenticationService {
 
     const userEntity = await new BlogUserEntity(blogUser).setPassword(password);
 
-    this.blogUserRepository.save(userEntity);
+    await this.blogUserRepository.save(userEntity);
 
     return userEntity;
   }
@@ -100,5 +103,46 @@ export class AuthenticationService {
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
+  }
+
+  public async decodeUserToken(request: Request): Promise<TokenPayload> {
+    // @ts-expect-error auth header
+    const bearerToken = request.headers.authorization;
+    const token = bearerToken.split(' ')[1];
+
+    let decodedToken;
+
+    try {
+      decodedToken = await this.jwtService.decode(token);
+    } catch (error) {
+      this.logger.error('[Token decode error]: ' + error.message);
+      throw new HttpException(
+        'Token decode error',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+
+    return decodedToken as TokenPayload;
+  }
+
+  public async changePassword(
+    email: string,
+    dto: ChangePasswordDto
+  ): Promise<BlogUserEntity> {
+    const existUser = await this.blogUserRepository.findByEmail(email);
+
+    if (!existUser) {
+      throw new NotFoundException(AUTH_USER_NOT_FOUND);
+    }
+
+    if (!(await existUser.comparePassword(dto.currentPassword))) {
+      throw new UnauthorizedException(AUTH_CHANGE_USER_CURRENT_PASSWORD_WRONG);
+    }
+
+    await existUser.setPassword(dto.newPassword);
+
+    await this.blogUserRepository.update(existUser);
+
+    return existUser;
   }
 }

@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -76,18 +77,25 @@ export class AuthenticationController {
   }
 
   @ApiResponse({
-    type: UserRdo,
-    status: HttpStatus.OK,
-    description: AuthenticationResponseMessage.UserFound,
+    status: HttpStatus.NO_CONTENT,
   })
   @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: AuthenticationResponseMessage.UserNotFound,
+    status: HttpStatus.CONFLICT,
+    description: AuthenticationResponseMessage.CurrentPasswordError,
   })
   @Post('/changePassword')
-  public async changePassword(@Body() dto: ChangePasswordDto) {
-    // Implementation
+  @UseGuards(JwtAuthGuard)
+  public async changePassword(
+    @Body() dto: ChangePasswordDto,
+    @Req() request: Request
+  ) {
+    const decodedToken = await this.authService.decodeUserToken(request);
+
+    const updatedUser = await this.authService.changePassword(
+      decodedToken.email,
+      dto
+    );
+
+    return updatedUser.toPOJO();
   }
 }
-
-// @UseGuards(JwtAuthGuard) - example of how to protect routes
