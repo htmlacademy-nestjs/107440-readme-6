@@ -11,4 +11,6 @@ export const CommentsResponseMessage = {
 export const CommentsValidationMessage = {
   MessageIsEmpty: 'The message is empty',
   InvalidID: 'Invalid user id',
+  MinMessageLength: 'Message in comment must be at least 10 characters long',
+  MaxMessageLength: 'Message in comment cannot be longer than 300 characters',
 } as const;
