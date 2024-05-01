@@ -4,6 +4,9 @@ import {
   IsString,
   IsArray,
   IsOptional,
+  ArrayMaxSize,
+  MaxLength,
+  MinLength,
 } from 'class-validator';
 
 import { PostTypeEnum } from '@project/core';
@@ -13,6 +16,7 @@ import { PostTextDto } from './post.text.dto';
 import { PostPhotoDto } from './post.photo.dto';
 import { PostVideoDto } from './post.video.dto';
 import { PostQuoteDto } from './post.quote.dto';
+import { PostsValidationMessage } from '../posts-module/posts.constant';
 
 export class BlogPostDto {
   @IsString()
@@ -24,6 +28,13 @@ export class BlogPostDto {
   public userId: string;
 
   @IsArray()
+  @IsString({ each: true })
+  @MinLength(3, { each: true, message: PostsValidationMessage.tags.minTagSize })
+  @MaxLength(10, {
+    each: true,
+    message: PostsValidationMessage.tags.maxTagSize,
+  })
+  @ArrayMaxSize(8, { message: PostsValidationMessage.tags.maxArraySize })
   @IsOptional()
   public tags?: string[];
 

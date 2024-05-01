@@ -24,6 +24,11 @@ export const PostsResponseMessage = {
 } as const;
 
 export const PostsValidationMessage = {
+  tags: {
+    maxArraySize: 'Maximum of 8 tags allowed',
+    maxTagSize: 'Tag must be at least 3 characters long',
+    minTagSize: 'Tag cannot be longer than 10 characters',
+  },
   videoPost: {
     titleMinLength: 'Title must be at least 10 characters long',
     titleMaxLength: 'Title cannot be longer than 50 characters',
