@@ -30,14 +30,6 @@ export class BlogPostService {
 
     const { postTypeFields, ...restFields } = dto;
 
-    if (!type) {
-      throw new ConflictException(POST_TYPE_IS_INCORRECT);
-    }
-
-    if (!postTypeFields) {
-      throw new ConflictException(POST_TYPE_DATA_IS_NOT_PROVIDED);
-    }
-
     const newPost = this.blogPostFactory.create(restFields);
 
     await this.blogPostRepository.save(newPost);
@@ -62,14 +54,6 @@ export class BlogPostService {
   }
 
   public async updatePost(dto: UpdatePostDto, postId: string) {
-    if (!dto.type) {
-      throw new ConflictException(POST_TYPE_IS_INCORRECT);
-    }
-
-    if (!dto.postTypeFields) {
-      throw new ConflictException(POST_TYPE_DATA_IS_NOT_PROVIDED);
-    }
-
     const existsPost = await this.blogPostRepository.findById(postId);
 
     if (dto.type !== existsPost.type) {
@@ -124,8 +108,8 @@ export class BlogPostService {
     // Implementation
   }
 
-  public async searchPostsByTitle(title: string) {
-    // Implementation
+  public async searchByTitle(title: string) {
+    return this.blogPostRepository.findByTitle(title);
   }
 
   public async getPost(postId: string): Promise<BlogPostEntity> {

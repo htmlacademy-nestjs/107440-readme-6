@@ -8,6 +8,7 @@ import {
   Body,
   HttpStatus,
   Patch,
+  UsePipes,
 } from '@nestjs/common';
 import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { fillDto } from '@project/helpers';
@@ -19,6 +20,9 @@ import { BlogPostRdo } from '../rdo/blog-post.rdo';
 import { UpdatePostDto } from '../dto/update';
 import { BlogPostWithPaginationRdo } from '../rdo/blog-post-with-pagination.rdo';
 import { BlogPostQuery } from './posts.query';
+import { TagsValidationPipe } from '../pipes/tags.pipe';
+import { PostTypeFieldsValidationPipe } from '../pipes/post-type-fields.pipe';
+import { PostTypeFieldsUpdateValidationPipe } from '../pipes/post-type-fields.update.pipe';
 
 @ApiTags('posts')
 @Controller('posts')
@@ -47,6 +51,7 @@ export class BlogPostController {
     description: PostsResponseMessage.PostCreated,
   })
   @Post()
+  @UsePipes(new TagsValidationPipe(), new PostTypeFieldsValidationPipe())
   public async createPost(@Body() blogPostDto: BlogPostDto) {
     const blogPostFull = await this.blogPostsService.createPost(blogPostDto);
     return fillDto(BlogPostRdo, blogPostFull.toPOJO());
@@ -61,9 +66,10 @@ export class BlogPostController {
     description: PostsResponseMessage.PostNotFound,
   })
   @Patch('/:postId')
+  @UsePipes(new TagsValidationPipe(), new PostTypeFieldsUpdateValidationPipe())
   public async updatePost(
-    @Param('postId') postId: string,
-    @Body() blogPostDto: UpdatePostDto
+    @Body() blogPostDto: UpdatePostDto,
+    @Param('postId') postId: string
   ) {
     const updatedPost = await this.blogPostsService.updatePost(
       blogPostDto,
@@ -94,7 +100,7 @@ export class BlogPostController {
     description: PostsResponseMessage.PostNotFound,
   })
   @Post('/:postId/like')
-  addLikeToPost(@Param('postId') postId: string) {
+  public async addLikeToPost(@Param('postId') postId: string) {
     // Implementation
   }
 
@@ -137,10 +143,22 @@ export class BlogPostController {
     description: PostsResponseMessage.PostsNotFound,
   })
   @Get('/search')
-  searchPostsByTitle(@Query('title') title: string) {
-    // Implementation
+  public async searchPostsByTitle(@Query('title') title: string) {
+    const entities = await this.blogPostsService.searchByTitle(title);
+
+    const posts = entities?.map((entity) => entity.toPOJO()) || [];
+
+    return posts;
   }
 
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: PostsResponseMessage.PostFound,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: PostsResponseMessage.PostNotFound,
+  })
   @Get('/:postId')
   public async getPost(@Param('postId') postId: string) {
     const post = await this.blogPostsService.getPost(postId);

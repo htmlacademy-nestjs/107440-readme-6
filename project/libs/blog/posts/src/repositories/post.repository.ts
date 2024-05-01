@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { BasePostgresRepository } from '@project/data-access';
 import { PrismaClientService } from '@project/blog-models';
-import { BlogPost, PaginationResult } from '@project/core';
+import { BlogPost, PaginationResult, PostStateEnum } from '@project/core';
 
 import { BlogPostFactory } from '../factories';
 import { BlogPostEntity } from '../entities';
@@ -89,6 +89,41 @@ export class BlogPostRepository extends BasePostgresRepository<
     const blogPost = this.createEntityFromDocument(postObj as BlogPost);
 
     return blogPost;
+  }
+
+  public async findByTitle(title: string): Promise<BlogPostEntity[]> {
+    const records = await this.client.post.findMany({
+      where: {
+        AND: [
+          { state: PostStateEnum.Published },
+          {
+            OR: [
+              { videoPost: { title: { contains: title } } },
+              { textPost: { title: { contains: title } } },
+            ],
+          },
+        ],
+      },
+      include: {
+        videoPost: true,
+        textPost: true,
+        comments: true,
+      },
+    });
+
+    return records.map((record) => {
+      const postTypeFieldsKey = `${record.type}Post`;
+
+      const { videoPost, textPost, comments, ...rest } = record;
+
+      const postObj = {
+        ...rest,
+        comments,
+        postTypeFields: record[postTypeFieldsKey],
+      };
+
+      return this.createEntityFromDocument(postObj as BlogPost);
+    });
   }
 
   public async deleteById(id: string): Promise<void> {
