@@ -2,15 +2,24 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { CommentsRepository } from './comments.repository';
 import { COMMENT_RECORD_NOT_FOUND } from './comments.constant';
 import { CreateCommentDto } from '../dto/create-comment.dto';
+import { CommentEntity } from './comments.entity';
+import { CommentFactory } from './comments.factory';
 
 @Injectable()
 export class CommentsService {
   constructor(private commentsRepository: CommentsRepository) {}
-  public async createComment(dto: CreateCommentDto, postId: string) {
-    // Implementation
+  public async createComment(
+    postId: string,
+    dto: CreateCommentDto
+  ): Promise<CommentEntity> {
+    const newComment = CommentFactory.createFromCreateCommentDto(dto, postId);
+
+    await this.commentsRepository.save(newComment);
+
+    return newComment;
   }
-  public getComments(postId: string) {
-    // Implementation
+  public getComments(postId: string): Promise<CommentEntity[]> {
+    return this.commentsRepository.findByPostId(postId);
   }
 
   public async deleteComment(commentId: string) {
@@ -21,9 +30,5 @@ export class CommentsService {
     }
 
     await this.commentsRepository.deleteById(commentId);
-  }
-
-  public deleteAllComments(postId: string) {
-    // Implementation
   }
 }

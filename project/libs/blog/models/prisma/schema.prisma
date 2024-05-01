@@ -21,6 +21,7 @@ model Post {
   userId    String   @map("user_id")
   state     String
   tags      String[]
+  likes     String[]
 
   comments Comment[]
 
@@ -29,7 +30,10 @@ model Post {
 
   // Each post can have only one type
   videoPost VideoPost?
-  PhotoPost PhotoPost?
+  photoPost PhotoPost?
+  linkPost  LinkPost?
+  quotePost QuotePost?
+  textPost  TextPost?
 
   @@index([id])
   @@map("posts")
@@ -63,7 +67,9 @@ model LinkPost {
   id          String  @id @default(uuid())
   link        String
   description String?
-  postId      String?
+
+  postId String @unique()
+  Post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("link_posts")
 }
@@ -73,6 +79,9 @@ model QuotePost {
   text   String
   author String
 
+  postId String @unique()
+  Post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   @@map("quote_posts")
 }
 
@@ -81,6 +90,9 @@ model TextPost {
   title        String
   announcement String
   text         String
+
+  postId String @unique()
+  Post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("text_posts")
 }

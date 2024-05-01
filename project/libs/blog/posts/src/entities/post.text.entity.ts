@@ -5,7 +5,7 @@ export class PostTextEntity
   extends PostTypeRelationEntity
   implements StorableEntity<PostText>
 {
-  public name: string;
+  public title: string;
   public announcement: string;
   public text: string;
 
@@ -19,17 +19,17 @@ export class PostTextEntity
       return;
     }
 
-    this.id = post.id ?? '';
-    this.name = post.name;
+    this.id = post.id ?? undefined;
+    this.title = post.title;
     this.announcement = post.announcement;
     this.text = post.text;
-    this.postId = post.postId ?? '';
+    this.postId = post.postId ?? undefined;
   }
 
   public toPOJO(): PostText {
     return {
       id: this.id,
-      name: this.name,
+      title: this.title,
       announcement: this.announcement,
       text: this.text,
       postId: this.postId,

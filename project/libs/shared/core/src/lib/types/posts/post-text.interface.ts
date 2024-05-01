@@ -1,7 +1,7 @@
 import { PostFields } from './post.fields.interface';
 
 export interface PostText extends PostFields {
-  name: string;
+  title: string;
   announcement: string;
   text: string;
 }

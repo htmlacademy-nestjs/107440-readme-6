@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { BasePostgresRepository } from '@project/data-access';
 
 import { Comment } from '@project/core';
@@ -20,19 +20,26 @@ export class CommentsRepository extends BasePostgresRepository<
   }
 
   public async save(entity: CommentEntity): Promise<void> {
+    console.log('entity - ', entity);
     const record = await this.client.comment.create({
       data: { ...entity.toPOJO() },
     });
 
     entity.id = record.id;
+    entity.createdAt = record.createdAt;
+    entity.updatedAt = record.updatedAt;
   }
 
   public async findById(id: string): Promise<CommentEntity> {
-    const foundRecord = await this.client.comment.findUnique({
+    const foundRecord = await this.client.comment.findFirst({
       where: {
         id,
       },
     });
+
+    if (!foundRecord) {
+      throw new NotFoundException(`Comment with id ${id} not found.`);
+    }
 
     return this.createEntityFromDocument(foundRecord);
   }
@@ -43,5 +50,15 @@ export class CommentsRepository extends BasePostgresRepository<
         id,
       },
     });
+  }
+
+  public async findByPostId(postId: string): Promise<CommentEntity[]> {
+    const records = await this.client.comment.findMany({
+      where: {
+        postId,
+      },
+    });
+
+    return records.map((record) => this.createEntityFromDocument(record));
   }
 }

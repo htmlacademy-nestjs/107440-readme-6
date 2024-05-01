@@ -1,1 +1,3 @@
+export { CommentFactory } from './comments-module/comments.factory';
+export { CommentEntity } from './comments-module/comments.entity';
 export { CommentsModule } from './comments-module/comments.module';

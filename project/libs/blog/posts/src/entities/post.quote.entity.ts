@@ -18,10 +18,10 @@ export class PostQuoteEntity
       return;
     }
 
-    this.id = post.id ?? '';
+    this.id = post.id ?? undefined;
     this.text = post.text;
     this.author = post.author;
-    this.postId = post.postId ?? '';
+    this.postId = post.postId ?? undefined;
   }
 
   public toPOJO(): PostQuote {

@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { BasePostgresRepository } from '@project/data-access';
 import { PrismaClientService } from '@project/blog-models';
+import { BlogPost, PaginationResult, PostStateEnum } from '@project/core';
 
 import { BlogPostFactory } from '../factories';
 import { BlogPostEntity } from '../entities';
-import { BlogPost } from '@project/core';
+import { BlogPostQuery } from '../posts-module/posts.query';
 
 @Injectable()
 export class BlogPostRepository extends BasePostgresRepository<
@@ -18,23 +20,110 @@ export class BlogPostRepository extends BasePostgresRepository<
     super(entityFactory, client);
   }
 
-  public async save(entity: BlogPostEntity): Promise<void> {
-    const record = await this.client.post.create({
-      data: { ...entity.toPOJO() },
-    });
-
-    entity.id = record.id;
+  private async getPostCount(where: Prisma.PostWhereInput): Promise<number> {
+    return this.client.post.count({ where });
   }
 
-  public async findById(id: string): Promise<BlogPostEntity> {
-    const foundRecord = await this.client.post.findUnique({
-      where: {
-        id,
+  private calculatePostsPage(totalCount: number, limit: number): number {
+    return Math.ceil(totalCount / limit);
+  }
+
+  public async save(entity: BlogPostEntity): Promise<void> {
+    const pojoEntity = entity.toPOJO();
+
+    // this.client.post doesn't store postTypeFields in Prisma
+    delete pojoEntity.postTypeFields;
+
+    const record = await this.client.post.create({
+      data: {
+        ...pojoEntity,
+        state: pojoEntity.state,
+        comments: {
+          connect: [],
+        },
       },
     });
 
-    // @ts-expect-error mismatch with string and enum
-    return this.createEntityFromDocument(foundRecord);
+    entity.id = record.id;
+    entity.createdAt = record.createdAt;
+    entity.updatedAt = record.updatedAt;
+  }
+
+  public async findById(id: string): Promise<BlogPostEntity> {
+    const postRecord = await this.client.post.findFirst({
+      where: {
+        id,
+      },
+      include: {
+        videoPost: true,
+        photoPost: true,
+        linkPost: true,
+        quotePost: true,
+        textPost: true,
+        comments: true,
+      },
+    });
+
+    if (!postRecord) {
+      throw new NotFoundException(`Post with id ${id} not found.`);
+    }
+
+    const postTypeFieldsKey = `${postRecord.type}Post`;
+
+    const {
+      videoPost,
+      photoPost,
+      quotePost,
+      linkPost,
+      textPost,
+      comments,
+      ...rest
+    } = postRecord;
+
+    const postObj = {
+      ...rest,
+      comments,
+      postTypeFields: postRecord[postTypeFieldsKey],
+    };
+
+    const blogPost = this.createEntityFromDocument(postObj as BlogPost);
+
+    return blogPost;
+  }
+
+  public async findByTitle(title: string): Promise<BlogPostEntity[]> {
+    const records = await this.client.post.findMany({
+      where: {
+        AND: [
+          { state: PostStateEnum.Published },
+          {
+            OR: [
+              { videoPost: { title: { contains: title } } },
+              { textPost: { title: { contains: title } } },
+            ],
+          },
+        ],
+      },
+      include: {
+        videoPost: true,
+        textPost: true,
+        comments: true,
+      },
+    });
+
+    return records.map((record) => {
+      const postTypeFieldsKey = `${record.type}Post`;
+
+      const { videoPost, textPost, comments, ...rest } = record;
+
+      const postObj = {
+        ...rest,
+        comments,
+        postTypeFields: record[postTypeFieldsKey],
+      };
+
+      return this.createEntityFromDocument(postObj as BlogPost);
+    });
   }
 
   public async deleteById(id: string): Promise<void> {
@@ -43,5 +132,100 @@ export class BlogPostRepository extends BasePostgresRepository<
         id,
       },
     });
+  }
+
+  public async update(entity: BlogPostEntity): Promise<void> {
+    const pojoEntity = entity.toPOJO();
+
+    const { comments, postTypeFields, ...restFields } = pojoEntity;
+
+    const postTypeKey = `${pojoEntity.type}Post`;
+
+    const { postId, ...restPostTypeFields } = postTypeFields;
+
+    await this.client.post.update({
+      where: { id: entity.id },
+      data: {
+        ...restFields,
+        [postTypeKey]: {
+          update: {
+            ...restPostTypeFields,
+          },
+        },
+      },
+      include: {
+        videoPost: true,
+        photoPost: true,
+        linkPost: true,
+        quotePost: true,
+        textPost: true,
+        comments: true,
+      },
+    });
+  }
+
+  public async find(
+    query?: BlogPostQuery
+  ): Promise<PaginationResult<BlogPostEntity>> {
+    const skip =
+      query?.page && query?.limit ? (query.page - 1) * query.limit : undefined;
+    const take = query?.limit;
+
+    const where: Prisma.PostWhereInput = {};
+    const orderBy: Prisma.PostOrderByWithRelationInput = {};
+
+    if (query?.type) {
+      where.type = query.type;
+    }
+
+    if (query?.sortDirection) {
+      orderBy.createdAt = query.sortDirection;
+    }
+
+    const [records, postCount] = await Promise.all([
+      this.client.post.findMany({
+        where,
+        orderBy,
+        skip,
+        take,
+        include: {
+          videoPost: true,
+          photoPost: true,
+          linkPost: true,
+          quotePost: true,
+          textPost: true,
+          comments: true,
+        },
+      }),
+      this.getPostCount(where),
+    ]);
+
+    return {
+      entities: records.map((record) => {
+        const postTypeFieldsKey = `${record.type}Post`;
+
+        const {
+          videoPost,
+          photoPost,
+          quotePost,
+          linkPost,
+          textPost,
+          comments,
+          ...rest
+        } = record;
+
+        const postObj = {
+          ...rest,
+          comments,
+          postTypeFields: record[postTypeFieldsKey],
+        };
+
+        return this.createEntityFromDocument(postObj as BlogPost);
+      }),
+      currentPage: query?.page,
+      totalPages: this.calculatePostsPage(postCount, take),
+      itemsPerPage: take,
+      totalItems: postCount,
+    };
   }
 }

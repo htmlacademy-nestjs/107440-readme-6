@@ -23,24 +23,23 @@ type BlogPostEntities =
   | PostQuoteEntity
   | PostPhotoEntity;
 
-type BlogPostInterfaces = PostLink &
-  PostVideo &
-  PostText &
-  PostQuote &
-  PostPhoto;
+type BlogPostInterfaces =
+  | PostLink
+  | PostVideo
+  | PostText
+  | PostQuote
+  | PostPhoto;
 
 @Injectable()
 export class PostTypesFactory {
-  constructor(private moduleRef: ModuleRef) {}
-
   public getFactoryInstance(postType: PostTypeEnum) {
-    const postFactory = FACTORIES_MAP[postType];
+    const PostFactory = FACTORIES_MAP[postType];
 
-    if (!postFactory) {
+    if (!PostFactory) {
       return null;
     }
 
-    return this.moduleRef.get(postFactory);
+    return new PostFactory();
   }
 
   public createPostByType(
@@ -49,7 +48,14 @@ export class PostTypesFactory {
   ): BlogPostEntities {
     const postFactoryInstance = this.getFactoryInstance(postType);
 
-    const postEntity = postFactoryInstance.create(entityPlainData);
+    if (!postFactoryInstance) {
+      throw new Error(`Factory not found for post type: ${postType}`);
+    }
+
+    const postEntity = postFactoryInstance.create(
+      //@ts-expect-error have no idea how to type create method
+      entityPlainData
+    ) as BlogPostEntities;
 
     return postEntity;
   }

@@ -1,43 +1,93 @@
-import { ConflictException, Injectable } from '@nestjs/common';
-import { PostTypeEnum } from '@project/core';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
-import { BlogPostRepository } from '../repositories';
+import { BlogPostRepository, PostTypesRepository } from '../repositories';
 import { BlogPostDto } from '../dto';
 import {
-  POST_RECORD_NOT_FOUND,
   POST_TYPE_DATA_IS_NOT_PROVIDED,
   POST_TYPE_IS_INCORRECT,
+  POST_TYPE_MISMATCH_ON_UPDATE,
 } from './posts.constant';
+import { BlogPostFactory, PostTypesFactory } from '../factories';
+import { BlogPostEntity } from '../entities';
+import { UpdatePostDto } from '../dto/update';
+import { BlogPostQuery } from './posts.query';
+import { PaginationResult } from '@project/core';
 
 @Injectable()
 export class BlogPostService {
-  constructor(private blogPostRepository: BlogPostRepository) {}
-  public async createPost(dto: BlogPostDto): Promise<void> {
-    const { type, postFields } = dto;
+  constructor(
+    private blogPostRepository: BlogPostRepository,
+    private blogPostFactory: BlogPostFactory,
+    private postTypesRepository: PostTypesRepository,
+    private postTypesFactory: PostTypesFactory
+  ) {}
+  public async createPost(dto: BlogPostDto): Promise<BlogPostEntity> {
+    const { type } = dto;
 
-    if (!type || !(type in PostTypeEnum)) {
-      throw new ConflictException(POST_TYPE_IS_INCORRECT);
-    }
+    const { postTypeFields, ...restFields } = dto;
 
-    if (!postFields) {
-      throw new ConflictException(POST_TYPE_DATA_IS_NOT_PROVIDED);
-    }
+    const newPost = this.blogPostFactory.create(restFields);
 
-    // Implementation
+    await this.blogPostRepository.save(newPost);
+
+    const postTypeRepository =
+      this.postTypesRepository.getRepositoryInstance(type);
+
+    const newPostType = this.postTypesFactory.createPostByType(
+      {
+        ...postTypeFields,
+        postId: newPost.id,
+      },
+      type
+    );
+
+    //@ts-expect-error types
+    await postTypeRepository.save(newPostType);
+
+    newPost.postTypeFields = newPostType;
+
+    return newPost;
   }
 
-  public async updatePost(dto: BlogPostDto, postId: string) {
-    // Implementation
+  public async updatePost(dto: UpdatePostDto, postId: string) {
+    const existsPost = await this.blogPostRepository.findById(postId);
+
+    if (dto.type !== existsPost.type) {
+      throw new ConflictException(POST_TYPE_MISMATCH_ON_UPDATE);
+    }
+
+    let hasPostTypeFieldsChanges = false;
+
+    for (const [key, value] of Object.entries(dto.postTypeFields)) {
+      if (
+        value !== undefined &&
+        key !== '' &&
+        existsPost.postTypeFields[key] !== value
+      ) {
+        existsPost.postTypeFields[key] = value;
+        hasPostTypeFieldsChanges = true;
+      }
+    }
+
+    if (!hasPostTypeFieldsChanges) {
+      return existsPost;
+    }
+
+    await this.blogPostRepository.update(existsPost);
+
+    return existsPost;
   }
 
   public async deletePost(postId: string) {
-    const existPost = await this.blogPostRepository.findById(postId);
-
-    if (!existPost) {
-      throw new ConflictException(POST_RECORD_NOT_FOUND);
+    try {
+      await this.blogPostRepository.deleteById(postId);
+    } catch {
+      throw new NotFoundException(`Post with ID ${postId} not found`);
     }
-
-    await this.blogPostRepository.deleteById(postId);
   }
 
   public async addLike(postId: string) {
@@ -48,15 +98,21 @@ export class BlogPostService {
     // Implementation
   }
 
-  public async getPosts() {
-    // Implementation
+  public async getAllPosts(
+    query?: BlogPostQuery
+  ): Promise<PaginationResult<BlogPostEntity>> {
+    return this.blogPostRepository.find(query);
   }
 
   public async getPostsByUserId(userId: string) {
     // Implementation
   }
 
-  public async searchPostsByTitle(title: string) {
-    // Implementation
+  public async searchByTitle(title: string) {
+    return this.blogPostRepository.findByTitle(title);
+  }
+
+  public async getPost(postId: string): Promise<BlogPostEntity> {
+    return this.blogPostRepository.findById(postId);
   }
 }

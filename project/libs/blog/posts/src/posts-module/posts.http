@@ -3,9 +3,15 @@ GET http://localhost:3000/api/posts HTTP/1.1
 
 ###
 
+# Get posts with filter
+
+GET http://localhost:3000/api/posts?limit=2&sortDirection=desc&type=photo&page=1 HTTP/1.1
+
+###
+
 # Get post by Id
 
-GET http://localhost:3000/api/posts/6d308040-96a2-4162-bea6-2338e9976540 HTTP/1.1
+GET http://localhost:3000/api/posts/cfc58b27-cc04-432d-8fcc-c4bfa5fc7a34 HTTP/1.1
 
 ###
 
@@ -15,28 +21,36 @@ POST http://localhost:3000/api/posts HTTP/1.1
 Content-Type: application/json
 
 {
-  "type": "Video",
-  "postFields": {
-    "title": "My BMW Series 4 review",
-    "videoUrl": "video url 4"
-  }
+  "type": "loh",
+  "userId": "12345"
 }
 
 ###
 
 # Delete a post by id
 
-DELETE http://localhost:3000/api/posts/6d308040-96a2-4162-bea6-2338e9976540 HTTP/1.1
+DELETE http://localhost:3000/api/posts/cfc58b27-cc04-432d-8fcc-c4bfa5fc7a34 HTTP/1.1
 
 ###
 
 # Update a post by id
 
-PATCH http://localhost:3000/api/posts/f39ed0ab-5129-4984-bd69-2ca375b55605 HTTP/1.1
+PATCH http://localhost:3000/api/posts/cfc58b27-cc04-432d-8fcc-c4bfa5fc7a34 HTTP/1.1
 Content-Type: application/json
 
 {
-  "title": "This is new title"
+  "type": "video",
+  "postTypeFields": {
+    "title": "Arsenal - Man City | Goals, highlights",
+    "videoUrl": "youtube.com/vide/12345"
+  }
 }
+
+###
+
+# Fing a post by title (only vide and text posts have title)
+
+GET http://localhost:3000/api/posts/search?title=cover HTTP/1.1
+Content-Type: application/json
 
 ###

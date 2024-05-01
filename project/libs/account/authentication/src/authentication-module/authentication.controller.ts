@@ -1,5 +1,17 @@
-import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+
+import { MongoIdValidationPipe } from '@project/pipes';
+import { fillDto } from '@project/helpers';
 
 import { AuthenticationService } from './authentication.service';
 import { SignUpUserDto } from '../dto/signup-user.dto';
@@ -9,6 +21,8 @@ import { ChangePasswordDto } from '../dto/change-password.dto';
 import { LoggedUserRdo } from '../rdo/logged-user.rdo';
 import { UserRdo } from '../rdo/user.rdo';
 import { AuthenticationResponseMessage } from './authentication.constant';
+
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @ApiTags('authentication')
 @Controller('auth')
@@ -38,10 +52,13 @@ export class AuthenticationController {
     status: HttpStatus.UNAUTHORIZED,
     description: AuthenticationResponseMessage.LoggedError,
   })
-  @Post('sigin')
+  @Post('signin')
   public async signin(@Body() dto: SignInUserDto) {
     const verifiedUser = await this.authService.verifyUser(dto);
-    return verifiedUser.toPOJO();
+
+    const userToken = await this.authService.createUserToken(verifiedUser);
+
+    return fillDto(LoggedUserRdo, { ...verifiedUser.toPOJO(), ...userToken });
   }
 
   @ApiResponse({
@@ -54,22 +71,31 @@ export class AuthenticationController {
     description: AuthenticationResponseMessage.UserNotFound,
   })
   @Get(':id')
-  public async show(@Param('id') id: string) {
+  public async show(@Param('id', MongoIdValidationPipe) id: string) {
     const existUser = await this.authService.getUserById(id);
     return existUser.toPOJO();
   }
 
   @ApiResponse({
-    type: UserRdo,
-    status: HttpStatus.OK,
-    description: AuthenticationResponseMessage.UserFound,
+    status: HttpStatus.NO_CONTENT,
   })
   @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: AuthenticationResponseMessage.UserNotFound,
+    status: HttpStatus.CONFLICT,
+    description: AuthenticationResponseMessage.CurrentPasswordError,
   })
   @Post('/changePassword')
-  public async changePassword(@Body() dto: ChangePasswordDto) {
-    // Implementation
+  @UseGuards(JwtAuthGuard)
+  public async changePassword(
+    @Body() dto: ChangePasswordDto,
+    @Req() request: Request
+  ) {
+    const decodedToken = await this.authService.decodeUserToken(request);
+
+    const updatedUser = await this.authService.changePassword(
+      decodedToken.email,
+      dto
+    );
+
+    return updatedUser.toPOJO();
   }
 }
