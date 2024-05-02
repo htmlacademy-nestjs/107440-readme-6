@@ -1,5 +1,6 @@
 export { ENVIRONMENTS } from './lib/env/env.config';
 export { DEFAULT_PORT } from './lib/env/env.config';
+export { DEFAULT_MONGO_PORT } from './lib/env/env.config';
 
 export { Environment } from './lib/env/env.config';
 
