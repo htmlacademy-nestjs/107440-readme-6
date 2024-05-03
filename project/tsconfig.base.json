@@ -22,8 +22,12 @@
       "@project/blog-models": ["libs/blog/models/src/index.ts"],
       "@project/blog-user": ["libs/account/blog-user/src/index.ts"],
       "@project/comments": ["libs/blog/comments/src/index.ts"],
+      "@project/config": ["libs/notify/config/src/index.ts"],
       "@project/core": ["libs/shared/core/src/index.ts"],
       "@project/data-access": ["libs/shared/data-access/src/index.ts"],
+      "@project/email-subscriber": [
+        "libs/notify/email-subscriber/src/index.ts"
+      ],
       "@project/feed": ["libs/blog/feed/src/index.ts"],
       "@project/file-storage-config": ["libs/file-storage/config/src/index.ts"],
       "@project/file-uploader": [
