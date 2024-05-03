@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
+import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
+
+import { getRabbitMQOptions } from '@project/helpers';
+
 import {
   EmailSubscriberModel,
   EmailSubscriberSchema,
@@ -14,6 +18,10 @@ import { EmailSubscriberFactory } from './email-subscriber.factory';
     MongooseModule.forFeature([
       { name: EmailSubscriberModel.name, schema: EmailSubscriberSchema },
     ]),
+    RabbitMQModule.forRootAsync(
+      RabbitMQModule,
+      getRabbitMQOptions('application.rabbit')
+    ),
   ],
   providers: [
     EmailSubscriberService,

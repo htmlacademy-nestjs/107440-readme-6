@@ -7,6 +7,7 @@ import {
   AccountConfigModule,
   getMongooseOptions,
 } from '@project/account-config';
+import { NotifyModule } from '@project/account-notify';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import {
     AuthenticationModule,
     AccountConfigModule,
     MongooseModule.forRootAsync(getMongooseOptions()),
+    NotifyModule,
   ],
   controllers: [],
   providers: [],
