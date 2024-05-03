@@ -1,3 +1,5 @@
 export * from './lib/common';
 
-export { getRabbitMQOptions } from './lib/brokers';
+export * from './lib/brokers';
+
+export * from './lib/mail';
