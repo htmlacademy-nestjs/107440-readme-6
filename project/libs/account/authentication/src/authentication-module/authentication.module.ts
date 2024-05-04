@@ -13,6 +13,8 @@ import { JwtAccessStrategy } from '../strategies/jwt-access.strategy';
 import { AuthenticationController } from './authentication.controller';
 import { AuthenticationService } from './authentication.service';
 
+import { LocalStrategy } from '../strategies/local.strategy';
+
 @Module({
   imports: [
     BlogUserModule,
@@ -23,6 +25,6 @@ import { AuthenticationService } from './authentication.service';
     NotifyModule,
   ],
   controllers: [AuthenticationController],
-  providers: [AuthenticationService, JwtAccessStrategy],
+  providers: [AuthenticationService, JwtAccessStrategy, LocalStrategy],
 })
 export class AuthenticationModule {}

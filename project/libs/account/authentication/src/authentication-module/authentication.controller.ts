@@ -17,7 +17,6 @@ import { fillDto } from '@project/helpers';
 
 import { AuthenticationService } from './authentication.service';
 import { SignUpUserDto } from '../dto/signup-user.dto';
-import { SignInUserDto } from '../dto/signin-user.dto';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 
 import { LoggedUserRdo } from '../rdo/logged-user.rdo';
@@ -25,6 +24,8 @@ import { UserRdo } from '../rdo/user.rdo';
 import { AuthenticationResponseMessage } from './authentication.constant';
 
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { LocalAuthGuard } from '../guards/local-auth.guard';
+import { RequestWithUser } from './request-with-user.interface';
 
 @ApiTags('authentication')
 @Controller('auth')
@@ -61,13 +62,12 @@ export class AuthenticationController {
     status: HttpStatus.UNAUTHORIZED,
     description: AuthenticationResponseMessage.LoggedError,
   })
+  @UseGuards(LocalAuthGuard)
   @Post('signin')
-  public async signin(@Body() dto: SignInUserDto) {
-    const verifiedUser = await this.authService.verifyUser(dto);
+  public async signin(@Req() { user }: RequestWithUser) {
+    const userToken = await this.authService.createUserToken(user);
 
-    const userToken = await this.authService.createUserToken(verifiedUser);
-
-    return fillDto(LoggedUserRdo, { ...verifiedUser.toPOJO(), ...userToken });
+    return fillDto(LoggedUserRdo, { ...user.toPOJO(), ...userToken });
   }
 
   @ApiResponse({
