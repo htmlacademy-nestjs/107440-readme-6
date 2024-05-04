@@ -15,6 +15,8 @@ import { JwtRefreshStrategy } from '../strategies/jwt-refresh.strategy';
 import { AuthenticationController } from './authentication.controller';
 import { AuthenticationService } from './authentication.service';
 
+import { RefreshTokenModule } from '../refresh-token-module/refresh-token.module';
+
 @Module({
   imports: [
     BlogUserModule,
@@ -23,6 +25,7 @@ import { AuthenticationService } from './authentication.service';
       useFactory: getJwtOptions,
     }),
     NotifyModule,
+    RefreshTokenModule,
   ],
   controllers: [AuthenticationController],
   providers: [
