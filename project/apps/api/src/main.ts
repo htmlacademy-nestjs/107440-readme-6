@@ -5,6 +5,7 @@
 
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 
 import { RequestIdInterceptor } from '@project/interceptors';
 
@@ -17,7 +18,8 @@ async function bootstrap() {
   app.setGlobalPrefix(globalPrefix);
   app.useGlobalInterceptors(new RequestIdInterceptor());
 
-  const port = process.env.PORT || 3000;
+  const configService = app.get(ConfigService);
+  const port = configService.get('apiGateway.port');
 
   await app.listen(port);
 

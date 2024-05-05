@@ -1,5 +1,5 @@
 import { registerAs } from '@nestjs/config';
-import { ENVIRONMENTS, DEFAULT_PORT } from '@project/core';
+import { DEFAULT_PORT } from '@project/core';
 import * as Joi from 'joi';
 
 export interface ApplicationConfig {
@@ -11,10 +11,11 @@ export interface ApplicationConfig {
 }
 
 const validationSchema = Joi.object({
-  environment: Joi.string()
-    .valid(...ENVIRONMENTS)
-    .required(),
   port: Joi.number().port().default(DEFAULT_PORT),
+  users: Joi.string().required(),
+  blog: Joi.string().required(),
+  notify: Joi.string().required(),
+  fileStorage: Joi.string().required(),
 });
 
 function validateConfig(config: ApplicationConfig): void {
@@ -37,4 +38,4 @@ function getConfig(): ApplicationConfig {
   return config;
 }
 
-export default registerAs('application', getConfig);
+export default registerAs('apiGateway', getConfig);
