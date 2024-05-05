@@ -4,8 +4,7 @@ import { HttpModule } from '@nestjs/axios';
 
 import { HTTP_CLIENT_MAX_REDIRECTS, HTTP_CLIENT_TIMEOUT } from './app.config';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { UsersController } from './users.controller';
 
 @Module({
   imports: [
@@ -14,7 +13,7 @@ import { AppService } from './app.service';
       maxRedirects: HTTP_CLIENT_MAX_REDIRECTS,
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [UsersController],
+  providers: [],
 })
 export class AppModule {}
