@@ -96,19 +96,10 @@ export class AuthenticationController {
     status: HttpStatus.CONFLICT,
     description: AuthenticationResponseMessage.CurrentPasswordError,
   })
-  @Post('/changePassword')
   @UseGuards(JwtAuthGuard)
-  public async changePassword(
-    @Body() dto: ChangePasswordDto,
-    @Req() request: Request
-  ) {
-    const decodedToken = await this.authService.decodeUserToken(request);
-
-    const updatedUser = await this.authService.changePassword(
-      decodedToken.email,
-      dto
-    );
-
+  @Post('/changePassword')
+  public async changePassword(@Body() dto: ChangePasswordDto) {
+    const updatedUser = await this.authService.changePassword(dto.userId, dto);
     return updatedUser.toPOJO();
   }
 

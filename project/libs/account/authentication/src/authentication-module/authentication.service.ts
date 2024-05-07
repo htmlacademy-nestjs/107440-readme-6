@@ -15,7 +15,7 @@ import { ConfigType } from '@nestjs/config';
 import { createJWTPayload } from '@project/helpers';
 
 import { BlogUserRepository, BlogUserEntity } from '@project/blog-user';
-import { UserRole, Token, User, TokenPayload } from '@project/core';
+import { UserRole, Token, User } from '@project/core';
 import { jwtConfig } from '@project/account-config';
 
 import { SignUpUserDto } from '../dto/signup-user.dto';
@@ -121,31 +121,11 @@ export class AuthenticationService {
     }
   }
 
-  public async decodeUserToken(request: Request): Promise<TokenPayload> {
-    // @ts-expect-error auth header
-    const bearerToken = request.headers.authorization;
-    const token = bearerToken.split(' ')[1];
-
-    let decodedToken;
-
-    try {
-      decodedToken = await this.jwtService.decode(token);
-    } catch (error) {
-      this.logger.error('[Token decode error]: ' + error.message);
-      throw new HttpException(
-        'Token decode error',
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
-
-    return decodedToken as TokenPayload;
-  }
-
   public async changePassword(
-    email: string,
+    userId: string,
     dto: ChangePasswordDto
   ): Promise<BlogUserEntity> {
-    const existUser = await this.blogUserRepository.findByEmail(email);
+    const existUser = await this.blogUserRepository.findById(userId);
 
     if (!existUser) {
       throw new NotFoundException(AUTH_USER_NOT_FOUND);
