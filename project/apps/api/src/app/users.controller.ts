@@ -23,7 +23,7 @@ import { AxiosExceptionFilter } from './filters/axios-exception.filter';
 import { ApplicationServiceURL } from './app.config';
 import { InjectUserIdInterceptor } from '@project/interceptors';
 import { CheckAuthGuard } from './guards/check-auth.guard';
-import { fillDto } from '@project/helpers';
+import { buildReqHeaders, fillDto } from '@project/helpers';
 
 @Controller('users')
 @UseFilters(AxiosExceptionFilter)
@@ -55,11 +55,7 @@ export class UsersController {
   ) {
     const { data } = await this.httpService.axiosRef.get(
       `${ApplicationServiceURL.Users}/${userId}`,
-      {
-        headers: {
-          Authorization: req.headers['authorization'],
-        },
-      }
+      buildReqHeaders(req)
     );
 
     return data;
@@ -75,11 +71,7 @@ export class UsersController {
     const { data } = await this.httpService.axiosRef.post(
       `${ApplicationServiceURL.Users}/changePassword`,
       changePasswordDto,
-      {
-        headers: {
-          Authorization: req.headers['authorization'],
-        },
-      }
+      buildReqHeaders(req)
     );
     return data;
   }
@@ -89,14 +81,9 @@ export class UsersController {
     @Param('userId') userId: string,
     @Req() req: Request
   ) {
-    console.log('getUserDetails, userId - ', userId);
     const { data: userData } = await this.httpService.axiosRef.get(
       `${ApplicationServiceURL.Users}/${userId}`,
-      {
-        headers: {
-          Authorization: req.headers['authorization'],
-        },
-      }
+      buildReqHeaders(req)
     );
 
     const { data: postsData } = await this.httpService.axiosRef.get(
@@ -117,11 +104,7 @@ export class UsersController {
     const { data } = await this.httpService.axiosRef.post(
       `${ApplicationServiceURL.Users}/refresh`,
       null,
-      {
-        headers: {
-          Authorization: req.headers['authorization'],
-        },
-      }
+      buildReqHeaders(req)
     );
 
     return data;
