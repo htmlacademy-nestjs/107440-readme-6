@@ -6,11 +6,7 @@ import {
 
 import { BlogPostRepository, PostTypesRepository } from '../repositories';
 import { BlogPostDto } from '../dto';
-import {
-  POST_TYPE_DATA_IS_NOT_PROVIDED,
-  POST_TYPE_IS_INCORRECT,
-  POST_TYPE_MISMATCH_ON_UPDATE,
-} from './posts.constant';
+import { POST_TYPE_MISMATCH_ON_UPDATE } from './posts.constant';
 import { BlogPostFactory, PostTypesFactory } from '../factories';
 import { BlogPostEntity } from '../entities';
 import { UpdatePostDto } from '../dto/update';
@@ -62,6 +58,8 @@ export class BlogPostService {
 
     let hasPostTypeFieldsChanges = false;
 
+    let hasTagsChanged = false;
+
     for (const [key, value] of Object.entries(dto.postTypeFields)) {
       if (
         value !== undefined &&
@@ -73,7 +71,18 @@ export class BlogPostService {
       }
     }
 
-    if (!hasPostTypeFieldsChanges) {
+    // For now it's a simple check for length property
+    if (
+      (dto.tags && !existsPost.tags) ||
+      (dto.tags &&
+        existsPost.tags &&
+        dto.tags.length !== existsPost.tags.length)
+    ) {
+      existsPost.tags = dto.tags;
+      hasTagsChanged = true;
+    }
+
+    if (!hasPostTypeFieldsChanges && !hasTagsChanged) {
       return existsPost;
     }
 

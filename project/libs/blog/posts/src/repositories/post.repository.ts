@@ -178,6 +178,16 @@ export class BlogPostRepository extends BasePostgresRepository<
       where.type = query.type;
     }
 
+    if (query?.tagName) {
+      where.tags = {
+        has: query.tagName,
+      };
+    }
+
+    if (query?.userId) {
+      where.userId = query.userId;
+    }
+
     if (query?.sortDirection) {
       orderBy.createdAt = query.sortDirection;
     }

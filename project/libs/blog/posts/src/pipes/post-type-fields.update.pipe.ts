@@ -1,4 +1,11 @@
-import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
+import {
+  PipeTransform,
+  Injectable,
+  BadRequestException,
+  Body,
+  Param,
+  ArgumentMetadata,
+} from '@nestjs/common';
 import { validate, ValidationError } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { PostPhotoDto, PostQuoteDto } from '../dto';
@@ -13,7 +20,12 @@ import {
 
 @Injectable()
 export class PostTypeFieldsUpdateValidationPipe implements PipeTransform {
-  async transform(blogPostDto: UpdatePostDto) {
+  async transform(value: UpdatePostDto | string, metadata: ArgumentMetadata) {
+    // value can be a post id
+    if (metadata.type === 'param') return value;
+
+    const blogPostDto = value as UpdatePostDto;
+
     const { type, postTypeFields } = blogPostDto;
 
     let dtoClass;

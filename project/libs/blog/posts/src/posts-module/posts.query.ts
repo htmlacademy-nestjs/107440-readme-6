@@ -1,5 +1,12 @@
 import { Transform } from 'class-transformer';
-import { IsArray, IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsIn,
+  IsMongoId,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 import { SortDirection } from '@project/core';
 
@@ -20,9 +27,12 @@ export class BlogPostQuery {
   public type: string;
 
   @IsString()
-  @IsArray()
   @IsOptional()
   public tagName: string;
+
+  @IsMongoId()
+  @IsOptional()
+  public userId: string;
 
   @IsIn(Object.values(SortDirection))
   @IsOptional()

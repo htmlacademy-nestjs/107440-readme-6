@@ -68,8 +68,8 @@ export class BlogPostController {
   @Patch('/:postId')
   @UsePipes(new TagsValidationPipe(), new PostTypeFieldsUpdateValidationPipe())
   public async updatePost(
-    @Body() blogPostDto: UpdatePostDto,
-    @Param('postId') postId: string
+    @Param('postId') postId: string,
+    @Body() blogPostDto: UpdatePostDto
   ) {
     const updatedPost = await this.blogPostsService.updatePost(
       blogPostDto,
@@ -114,23 +114,6 @@ export class BlogPostController {
   })
   @Delete('/:postId/like')
   deleteLikeFromPost(@Param('postId') postId: string) {
-    // Implementation
-  }
-
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: PostsResponseMessage.PostsFound,
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: PostsResponseMessage.PostsNotFound,
-  })
-  @Get('/user/:userId')
-  getPostsByUserId(
-    @Param('userId') userId: string,
-    @Query('type') type: string,
-    @Query('tagName') tagName: string
-  ) {
     // Implementation
   }
 
