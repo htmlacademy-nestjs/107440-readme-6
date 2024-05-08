@@ -1,17 +1,18 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
+import { PaginationResult, PostStateEnum } from '@project/core';
 
 import { BlogPostRepository, PostTypesRepository } from '../repositories';
 import { BlogPostDto } from '../dto';
-import { POST_TYPE_MISMATCH_ON_UPDATE } from './posts.constant';
+import {
+  POST_LIKE_CAN_NOT_BE_HANDLED,
+  POST_LIKE_EXISTS,
+  POST_TYPE_MISMATCH_ON_UPDATE,
+} from './posts.constant';
 import { BlogPostFactory, PostTypesFactory } from '../factories';
 import { BlogPostEntity } from '../entities';
 import { UpdatePostDto } from '../dto/update';
 import { BlogPostQuery } from './posts.query';
-import { PaginationResult } from '@project/core';
+import { PostNotFoundException } from '../exceptions/post-not-found.exception';
 
 @Injectable()
 export class BlogPostService {
@@ -95,16 +96,42 @@ export class BlogPostService {
     try {
       await this.blogPostRepository.deleteById(postId);
     } catch {
-      throw new NotFoundException(`Post with ID ${postId} not found`);
+      throw new PostNotFoundException(postId);
     }
   }
 
-  public async addLike(postId: string) {
-    // Implementation
+  public async addLike(postId: string, userId: string) {
+    const existsPost = await this.getPostById(postId);
+
+    if (existsPost.state !== PostStateEnum.Published) {
+      throw new ConflictException(POST_LIKE_CAN_NOT_BE_HANDLED);
+    }
+
+    if (existsPost.likes.includes(userId)) {
+      throw new ConflictException(POST_LIKE_EXISTS);
+    }
+
+    existsPost.likes.push(userId);
+
+    await this.blogPostRepository.update(existsPost);
+
+    return existsPost;
   }
 
-  public async removeLike(postId: string) {
-    // Implementation
+  public async removeLike(postId: string, userId: string) {
+    const existsPost = await this.getPostById(postId);
+
+    if (existsPost.state !== PostStateEnum.Published) {
+      throw new ConflictException(POST_LIKE_CAN_NOT_BE_HANDLED);
+    }
+
+    existsPost.likes = existsPost.likes.filter(
+      (userIdFromArr) => userIdFromArr !== userId
+    );
+
+    await this.blogPostRepository.update(existsPost);
+
+    return existsPost;
   }
 
   public async getAllPosts(
@@ -113,15 +140,17 @@ export class BlogPostService {
     return this.blogPostRepository.find(query);
   }
 
-  public async getPostsByUserId(userId: string) {
-    // Implementation
-  }
-
   public async searchByTitle(title: string) {
     return this.blogPostRepository.findByTitle(title);
   }
 
-  public async getPost(postId: string): Promise<BlogPostEntity> {
-    return this.blogPostRepository.findById(postId);
+  public async getPostById(postId: string): Promise<BlogPostEntity> {
+    const existsPost = await this.blogPostRepository.findById(postId);
+
+    if (!existsPost) {
+      throw new PostNotFoundException(postId);
+    }
+
+    return existsPost;
   }
 }

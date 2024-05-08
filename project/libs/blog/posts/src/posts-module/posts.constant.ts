@@ -6,6 +6,11 @@ export const POST_TYPE_MISMATCH_ON_UPDATE =
   'Post type in dto is not matching with the type from post record';
 export const POST_TYPE_DATA_IS_NOT_PROVIDED = 'Post type data is not provided';
 
+export const POST_LIKE_CAN_NOT_BE_HANDLED =
+  'Post should be in "Published" state to add or remove like';
+
+export const POST_LIKE_EXISTS = 'This user has already liked this post';
+
 export const DEFAULT_POST_COUNT_LIMIT = 25;
 export const DEFAULT_SORT_DIRECTION = SortDirection.Desc;
 export const DEFAULT_PAGE_COUNT = 1;
