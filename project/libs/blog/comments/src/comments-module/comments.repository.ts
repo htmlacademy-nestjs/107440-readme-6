@@ -6,6 +6,7 @@ import { PrismaClientService } from '@project/blog-models';
 
 import { CommentEntity } from './comments.entity';
 import { CommentFactory } from './comments.factory';
+import { CommentsQuery } from './comments.query';
 
 @Injectable()
 export class CommentsRepository extends BasePostgresRepository<
@@ -20,7 +21,6 @@ export class CommentsRepository extends BasePostgresRepository<
   }
 
   public async save(entity: CommentEntity): Promise<void> {
-    console.log('entity - ', entity);
     const record = await this.client.comment.create({
       data: { ...entity.toPOJO() },
     });
@@ -52,11 +52,16 @@ export class CommentsRepository extends BasePostgresRepository<
     });
   }
 
-  public async findByPostId(postId: string): Promise<CommentEntity[]> {
+  public async findByPostId(
+    postId: string,
+    query?: CommentsQuery
+  ): Promise<CommentEntity[]> {
     const records = await this.client.comment.findMany({
       where: {
         postId,
       },
+      skip: query?.offset,
+      take: query?.limit,
     });
 
     return records.map((record) => this.createEntityFromDocument(record));

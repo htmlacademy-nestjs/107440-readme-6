@@ -11,6 +11,7 @@ import { UsersController } from './users.controller';
 import { CheckAuthGuard } from './guards/check-auth.guard';
 
 import { BlogController } from './blog.controller';
+import { CommentsController } from './comments.controller';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { BlogController } from './blog.controller';
       maxRedirects: HTTP_CLIENT_MAX_REDIRECTS,
     }),
   ],
-  controllers: [UsersController, BlogController],
+  controllers: [UsersController, BlogController, CommentsController],
   providers: [CheckAuthGuard],
 })
 export class AppModule {}

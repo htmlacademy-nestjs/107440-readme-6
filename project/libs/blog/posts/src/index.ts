@@ -4,4 +4,4 @@ export { BlogPostQuery } from './posts-module/posts.query';
 
 export { PostsModule } from './posts-module/posts.module';
 
-export { BlogPostDto, BlogPostLikesDto } from './dto';
+export { BlogPostDto } from './dto';

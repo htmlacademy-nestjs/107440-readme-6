@@ -22,6 +22,7 @@ export class CommentEntity extends Entity implements StorableEntity<Comment> {
     this.message = comment.message;
     this.createdAt = comment.createdAt ?? undefined;
     this.updatedAt = comment.updatedAt ?? undefined;
+    this.userId = comment.userId;
   }
 
   public toPOJO(): Comment {
