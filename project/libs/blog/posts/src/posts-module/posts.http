@@ -75,6 +75,13 @@ Content-Type: application/json
 
 ###
 
+# Get all drafts of auth user
+
+GET http://localhost:3334/api/posts/drafts?userId=658170cbb954e9f5b905ccf4 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjMyNDRlNjc0ZDg1ZjEwMzFjZWE2ZjMiLCJlbWFpbCI6Im15ZW1haWxAdGVzdC5jbyIsInJvbGUiOiJ1c2VyIiwibGFzdG5hbWUiOiJDb2JhaW4iLCJmaXJzdG5hbWUiOiJLdXJ0IiwiaWF0IjoxNzE1MTA5OTAzLCJleHAiOjE3MTUxMTE0MDN9.vtfKJilRyyxwc4NI36M5-7Vo_14XLneYYUD1Upkw6Gc
+
+###
+
 # Add like to the post
 
 POST http://localhost:3334/api/posts/b38f7b47-e0ed-41bc-86b8-24226c5e36e3/like/6d308040-96a2-4162-bea6-2338e9976540 HTTP/1.1

@@ -165,7 +165,8 @@ export class BlogPostRepository extends BasePostgresRepository<
   }
 
   public async find(
-    query?: BlogPostQuery
+    query?: BlogPostQuery,
+    state?: PostStateEnum
   ): Promise<PaginationResult<BlogPostEntity>> {
     const skip =
       query?.page && query?.limit ? (query.page - 1) * query.limit : undefined;
@@ -190,6 +191,10 @@ export class BlogPostRepository extends BasePostgresRepository<
 
     if (query?.sortDirection) {
       orderBy.createdAt = query.sortDirection;
+    }
+
+    if (state) {
+      where.state = state;
     }
 
     const [records, postCount] = await Promise.all([

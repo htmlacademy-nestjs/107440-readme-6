@@ -135,9 +135,10 @@ export class BlogPostService {
   }
 
   public async getAllPosts(
-    query?: BlogPostQuery
+    query?: BlogPostQuery,
+    state?: PostStateEnum
   ): Promise<PaginationResult<BlogPostEntity>> {
-    return this.blogPostRepository.find(query);
+    return this.blogPostRepository.find(query, state);
   }
 
   public async searchByTitle(title: string) {

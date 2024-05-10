@@ -23,11 +23,13 @@ import { BlogPostQuery } from './posts.query';
 import { TagsValidationPipe } from '../pipes/tags.pipe';
 import { PostTypeFieldsValidationPipe } from '../pipes/post-type-fields.pipe';
 import { PostTypeFieldsUpdateValidationPipe } from '../pipes/post-type-fields.update.pipe';
+import { PostStateEnum } from '@project/core';
 
 @ApiTags('posts')
 @Controller('posts')
 export class BlogPostController {
   constructor(private blogPostsService: BlogPostService) {}
+
   @ApiResponse({
     status: HttpStatus.OK,
     description: PostsResponseMessage.PostsFound,
@@ -37,8 +39,12 @@ export class BlogPostController {
     description: PostsResponseMessage.PostsNotFound,
   })
   @Get()
-  public async getPosts(@Query() query: BlogPostQuery) {
-    const postsWithPagination = await this.blogPostsService.getAllPosts(query);
+  public async getPosts(@Query() query: BlogPostQuery, state?: PostStateEnum) {
+    const postsWithPagination = await this.blogPostsService.getAllPosts(
+      query,
+      state
+    );
+
     const result = {
       ...postsWithPagination,
       entities: postsWithPagination.entities.map((post) => ({
@@ -46,7 +52,22 @@ export class BlogPostController {
         likes: post.likes?.length || 0,
       })),
     };
+
     return fillDto(BlogPostWithPaginationRdo, result);
+  }
+
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: PostsResponseMessage.PostsFound,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: PostsResponseMessage.PostsNotFound,
+  })
+  @Get('/drafts')
+  public async getDraftPosts(@Query() query: BlogPostQuery) {
+    const state = PostStateEnum.Draft;
+    return await this.getPosts(query, state);
   }
 
   @ApiResponse({

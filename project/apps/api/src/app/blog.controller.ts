@@ -20,6 +20,7 @@ import { AxiosExceptionFilter } from './filters/axios-exception.filter';
 import { CheckAuthGuard } from './guards/check-auth.guard';
 import { ApplicationServiceURL } from './app.config';
 import { RequestWithTokenPayload } from '@project/authentication';
+import { buildReqHeaders } from '@project/helpers';
 
 @Controller('blog')
 @UseFilters(AxiosExceptionFilter)
@@ -44,6 +45,19 @@ export class BlogController {
       {
         params: query,
       }
+    );
+
+    return data;
+  }
+
+  @UseGuards(CheckAuthGuard)
+  @Get('drafts')
+  public async getDrafts(@Req() req: RequestWithTokenPayload) {
+    const userId = req.user.sub;
+
+    const { data } = await this.httpService.axiosRef.get(
+      `${ApplicationServiceURL.Blog}/drafts?userId=${userId}`,
+      buildReqHeaders(req)
     );
 
     return data;
