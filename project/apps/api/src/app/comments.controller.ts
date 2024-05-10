@@ -66,8 +66,10 @@ export class CommentsController {
     @Param('postId') postId: string,
     @Body() dto: Partial<CreateCommentDto>
   ) {
+    const blogPost = await this.getBlogPost(postId);
+
     const { data } = await this.httpService.axiosRef.post(
-      `${ApplicationServiceURL.Blog}/${postId}/comments`,
+      `${ApplicationServiceURL.Blog}/${blogPost.id}/comments`,
       dto
     );
 
