@@ -92,4 +92,19 @@ export class BlogController {
 
     return data;
   }
+
+  @UseGuards(CheckAuthGuard)
+  @Post(':postId/repost')
+  public async repost(
+    @Param('postId') postId: string,
+    @Req() req: RequestWithTokenPayload
+  ) {
+    const userId = req.user.sub;
+
+    const { data } = await this.httpService.axiosRef.post(
+      `${ApplicationServiceURL.Blog}/${postId}/repost?userId=${userId}`
+    );
+
+    return data;
+  }
 }

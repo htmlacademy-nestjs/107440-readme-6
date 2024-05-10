@@ -7,6 +7,8 @@ import {
   ArrayMaxSize,
   MaxLength,
   MinLength,
+  IsBoolean,
+  IsUUID,
 } from 'class-validator';
 
 import { PostTypeEnum } from '@project/core';
@@ -27,6 +29,25 @@ export class BlogPostDto {
   @IsMongoId()
   public userId: string;
 
+  @IsString()
+  @IsMongoId()
+  @IsOptional()
+  public originalUserId?: string;
+
+  @IsString()
+  @IsUUID()
+  @IsOptional()
+  public originalPostTypeFieldsId?: string;
+
+  @IsString()
+  @IsUUID()
+  @IsOptional()
+  public originalPostId?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  public isReposted?: boolean;
+
   @IsArray()
   @IsString({ each: true })
   @MinLength(3, { each: true, message: PostsValidationMessage.tags.minTagSize })
@@ -39,9 +60,10 @@ export class BlogPostDto {
   public tags?: string[];
 
   @IsNotEmpty()
-  public postTypeFields: PostLinkDto &
-    PostTextDto &
-    PostQuoteDto &
-    PostVideoDto &
-    PostPhotoDto;
+  public postTypeFields:
+    | PostLinkDto
+    | PostTextDto
+    | PostQuoteDto
+    | PostVideoDto
+    | PostPhotoDto;
 }

@@ -36,6 +36,12 @@ model Post {
   quotePost QuotePost?
   textPost  TextPost?
 
+  originalPostId           String? @map("original_post_id")
+  originalPostTypeFieldsId String? @map("original_post_type_fields_id")
+  originalUserId           String? @map("original_user_id")
+
+  isReposted Boolean?
+
   @@index([id])
   @@map("posts")
 }

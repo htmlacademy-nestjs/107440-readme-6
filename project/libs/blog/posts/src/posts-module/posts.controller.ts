@@ -24,6 +24,7 @@ import { TagsValidationPipe } from '../pipes/tags.pipe';
 import { PostTypeFieldsValidationPipe } from '../pipes/post-type-fields.pipe';
 import { PostTypeFieldsUpdateValidationPipe } from '../pipes/post-type-fields.update.pipe';
 import { PostStateEnum } from '@project/core';
+import { RepostedBlogPostRdo } from '../rdo/blog-post-reposted.rdo';
 
 @ApiTags('posts')
 @Controller('posts')
@@ -163,6 +164,23 @@ export class BlogPostController {
     const posts = entities?.map((entity) => entity.toPOJO()) || [];
 
     return posts;
+  }
+
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: PostsResponseMessage.PostsFound,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: PostsResponseMessage.PostsNotFound,
+  })
+  @Post(':postId/repost')
+  public async makeRepost(
+    @Param('postId') postId: string,
+    @Query('userId') userId: string
+  ) {
+    const repostedPost = await this.blogPostsService.makeRepost(postId, userId);
+    return fillDto(RepostedBlogPostRdo, repostedPost.toPOJO());
   }
 
   @ApiResponse({

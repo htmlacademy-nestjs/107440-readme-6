@@ -6,6 +6,8 @@ import { BlogPostDto } from '../dto';
 import {
   POST_LIKE_CAN_NOT_BE_HANDLED,
   POST_LIKE_EXISTS,
+  POST_REPOST_USER_MISMATCH_ERROR,
+  POST_REPOST_WAS_ALREADY_MADE_ERROR,
   POST_TYPE_MISMATCH_ON_UPDATE,
 } from './posts.constant';
 import { BlogPostFactory, PostTypesFactory } from '../factories';
@@ -157,5 +159,45 @@ export class BlogPostService {
     }
 
     return existsPost;
+  }
+
+  public async makeRepost(
+    postId: string,
+    userId: string
+  ): Promise<BlogPostEntity> {
+    const existsPost = await this.blogPostRepository.findById(postId);
+
+    if (!existsPost) {
+      throw new PostNotFoundException(postId);
+    }
+
+    if (userId === existsPost.userId) {
+      throw new ConflictException(POST_REPOST_USER_MISMATCH_ERROR);
+    }
+
+    const existsRepost = await this.blogPostRepository.findRepost(
+      postId,
+      userId
+    );
+
+    if (existsRepost) {
+      throw new ConflictException(POST_REPOST_WAS_ALREADY_MADE_ERROR);
+    }
+
+    const newPostData = {
+      state: existsPost.state,
+      type: existsPost.type,
+      tags: existsPost.tags,
+      isReposted: true,
+      originalPostId: existsPost.id,
+      originalPostTypeFieldsId: existsPost.postTypeFields?.id,
+      originalUserId: existsPost.userId,
+      postTypeFields: existsPost.postTypeFields,
+      userId,
+    };
+
+    const newPost = await this.createPost(newPostData);
+
+    return newPost;
   }
 }

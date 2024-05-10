@@ -19,5 +19,10 @@ export interface BlogPost {
   likesCount?: number; // field to sort posts by Prisma client
   comments?: Comment[];
 
+  isReposted?: boolean;
+  originalUserId?: string;
+  originalPostId?: string;
+  originalPostTypeFieldsId?: string;
+
   postTypeFields?: PostLink | PostVideo | PostText | PostQuote | PostPhoto;
 }
