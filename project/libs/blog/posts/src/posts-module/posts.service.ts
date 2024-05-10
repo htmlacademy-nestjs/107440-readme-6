@@ -113,6 +113,8 @@ export class BlogPostService {
 
     existsPost.likes.push(userId);
 
+    existsPost.likesCount += 1;
+
     await this.blogPostRepository.update(existsPost);
 
     return existsPost;
@@ -128,6 +130,8 @@ export class BlogPostService {
     existsPost.likes = existsPost.likes.filter(
       (userIdFromArr) => userIdFromArr !== userId
     );
+
+    existsPost.likesCount -= 1;
 
     await this.blogPostRepository.update(existsPost);
 

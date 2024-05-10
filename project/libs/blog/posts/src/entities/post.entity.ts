@@ -28,6 +28,7 @@ export class BlogPostEntity extends Entity implements StorableEntity<BlogPost> {
   public state: PostStateEnum;
   public type: PostTypeEnum;
   public likes: string[];
+  public likesCount: number;
   public tags?: string[];
   public comments?: CommentEntity[];
 
@@ -50,6 +51,7 @@ export class BlogPostEntity extends Entity implements StorableEntity<BlogPost> {
     this.type = post.type;
     this.state = post.state ?? PostStateEnum.Published;
     this.likes = post.likes;
+    this.likesCount = post.likesCount;
     this.tags = post.tags ?? undefined;
     this.comments = [];
 
@@ -76,6 +78,7 @@ export class BlogPostEntity extends Entity implements StorableEntity<BlogPost> {
       userId: this.userId,
       type: this.type,
       likes: this.likes,
+      likesCount: this.likesCount,
       tags: this.tags,
       postTypeFields: this.postTypeFields?.toPOJO(),
       comments: this.comments.map((commentEntity) => commentEntity.toPOJO()),

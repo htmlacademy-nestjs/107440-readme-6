@@ -49,7 +49,6 @@ export class BlogPostController {
       ...postsWithPagination,
       entities: postsWithPagination.entities.map((post) => ({
         ...post.toPOJO(),
-        likes: post.likes?.length || 0,
       })),
     };
 

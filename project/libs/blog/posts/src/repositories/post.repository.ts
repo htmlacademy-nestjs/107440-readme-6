@@ -2,7 +2,12 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { BasePostgresRepository } from '@project/data-access';
 import { PrismaClientService } from '@project/blog-models';
-import { BlogPost, PaginationResult, PostStateEnum } from '@project/core';
+import {
+  BlogPost,
+  PaginationResult,
+  PostStateEnum,
+  SortBy,
+} from '@project/core';
 
 import { BlogPostFactory } from '../factories';
 import { BlogPostEntity } from '../entities';
@@ -189,8 +194,20 @@ export class BlogPostRepository extends BasePostgresRepository<
       where.userId = query.userId;
     }
 
-    if (query?.sortDirection) {
-      orderBy.createdAt = query.sortDirection;
+    if (query?.sortBy) {
+      switch (query.sortBy) {
+        case SortBy.Likes:
+          orderBy.likesCount = query.sortDirection;
+          break;
+        case SortBy.Comments:
+          orderBy.comments = { _count: query.sortDirection };
+          break;
+        case SortBy.Date:
+          orderBy.createdAt = query.sortDirection;
+          break;
+        default:
+          break;
+      }
     }
 
     if (state) {

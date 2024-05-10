@@ -15,13 +15,14 @@ datasource db {
 }
 
 model Post {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  userId    String   @map("user_id")
-  state     String
-  tags      String[]
-  likes     String[]
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  userId     String   @map("user_id")
+  state      String
+  tags       String[]
+  likes      String[] // field to store ids of users who liked the post
+  likesCount Int      @default(0) // field to sort posts by likes count
 
   comments Comment[]
 

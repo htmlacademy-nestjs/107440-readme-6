@@ -15,7 +15,8 @@ export interface BlogPost {
   tags?: string[];
   userId: string;
   type: PostTypeEnum;
-  likes?: string[];
+  likes?: string[]; // field to store ids of users who liked the post
+  likesCount?: number; // field to sort posts by Prisma client
   comments?: Comment[];
 
   postTypeFields?: PostLink | PostVideo | PostText | PostQuote | PostPhoto;

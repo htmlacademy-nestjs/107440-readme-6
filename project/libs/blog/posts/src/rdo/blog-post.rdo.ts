@@ -1,5 +1,5 @@
 import { PostStateEnum, PostTypeEnum, Comment } from '@project/core';
-import { Expose, Transform } from 'class-transformer';
+import { Expose } from 'class-transformer';
 
 export class BlogPostRdo {
   @Expose()
@@ -20,9 +20,8 @@ export class BlogPostRdo {
   @Expose()
   public userId: string;
 
-  @Transform(({ value }) => value?.length || 0)
   @Expose()
-  public likes: number;
+  public likesCount: number;
 
   @Expose()
   public tags?: string[];

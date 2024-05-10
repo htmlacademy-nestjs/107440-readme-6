@@ -15,6 +15,12 @@ GET http://localhost:4000/api/blog?type=link HTTP/1.1
 
 ###
 
+# Sort posts by likes/comments. Deafult is by date.
+
+GET http://localhost:4000/api/blog?sortDirection=desc&sortBy=likes HTTP/1.1
+
+###
+
 # Get post by Id
 
 GET http://localhost:4000/api/blog/cfc58b27-cc04-432d-8fcc-c4bfa5fc7a34 HTTP/1.1
