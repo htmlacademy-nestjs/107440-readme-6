@@ -53,9 +53,9 @@ export class AuthenticationController {
   @Post('signup')
   public async signup(@Body() dto: SignUpUserDto) {
     const newUser = await this.authService.register(dto);
-    const { email, firstname, lastname } = newUser;
 
-    await this.notifyService.registerSubscriber({ email, firstname, lastname });
+    //const { email, firstname, lastname } = newUser;
+    //await this.notifyService.registerSubscriber({ email, firstname, lastname });
 
     return newUser.toPOJO();
   }
@@ -94,7 +94,7 @@ export class AuthenticationController {
   }
 
   @ApiResponse({
-    status: HttpStatus.NO_CONTENT,
+    status: HttpStatus.OK,
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
@@ -118,12 +118,18 @@ export class AuthenticationController {
     return this.authService.createUserToken(user);
   }
 
+  @ApiResponse({
+    status: HttpStatus.OK,
+  })
   @UseGuards(JwtAuthGuard)
   @Post('check')
   public async checkToken(@Req() { user: payload }: RequestWithTokenPayload) {
     return payload;
   }
 
+  @ApiResponse({
+    status: HttpStatus.OK,
+  })
   @Patch('avatar')
   public async uploadAvatar(
     @Body() body: UserAvatarDto,

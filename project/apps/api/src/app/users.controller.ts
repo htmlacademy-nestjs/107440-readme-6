@@ -4,6 +4,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpStatus,
   MaxFileSizeValidator,
   Param,
   ParseFilePipe,
@@ -26,6 +27,9 @@ import {
   UserDetailsRdo,
   SignUpUserDto,
   RequestWithTokenPayload,
+  AuthenticationResponseMessage,
+  UserRdo,
+  LoggedUserRdo,
 } from '@project/authentication';
 
 import { AxiosExceptionFilter } from './filters/axios-exception.filter';
@@ -36,12 +40,22 @@ import { CheckAuthGuard } from './guards/check-auth.guard';
 import { buildReqHeaders, fillDto } from '@project/helpers';
 import { AVATAR_FILE_FORMATS, MAX_AVATAR_FILE_SIZE } from '@project/blog-user';
 import { FileTypeValidationPipe } from '@project/pipes';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('users')
 @Controller('users')
 @UseFilters(AxiosExceptionFilter)
 export class UsersController {
   constructor(private readonly httpService: HttpService) {}
 
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: AuthenticationResponseMessage.UserCreated,
+  })
+  @ApiResponse({
+    status: HttpStatus.CONFLICT,
+    description: AuthenticationResponseMessage.UserExist,
+  })
   @Post('signup')
   public async signup(@Body() signupUserDto: SignUpUserDto) {
     const { data } = await this.httpService.axiosRef.post(
@@ -51,6 +65,15 @@ export class UsersController {
     return data;
   }
 
+  @ApiResponse({
+    type: LoggedUserRdo,
+    status: HttpStatus.OK,
+    description: AuthenticationResponseMessage.LoggedSuccess,
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: AuthenticationResponseMessage.LoggedError,
+  })
   @Post('signin')
   public async signin(@Body() signinUserDto: SignInUserDto) {
     const { data } = await this.httpService.axiosRef.post(
@@ -60,6 +83,15 @@ export class UsersController {
     return data;
   }
 
+  @ApiResponse({
+    type: UserRdo,
+    status: HttpStatus.OK,
+    description: AuthenticationResponseMessage.UserFound,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: AuthenticationResponseMessage.UserNotFound,
+  })
   @Get(':userId')
   public async getUserById(
     @Param('userId') userId: string,
@@ -73,6 +105,13 @@ export class UsersController {
     return data;
   }
 
+  @ApiResponse({
+    status: HttpStatus.OK,
+  })
+  @ApiResponse({
+    status: HttpStatus.CONFLICT,
+    description: AuthenticationResponseMessage.CurrentPasswordError,
+  })
   @UseGuards(CheckAuthGuard)
   @UseInterceptors(InjectUserIdInterceptor)
   @Post('changePassword')
@@ -88,6 +127,9 @@ export class UsersController {
     return data;
   }
 
+  @ApiResponse({
+    status: HttpStatus.OK,
+  })
   @Get(':userId/details')
   public async getUserDetails(
     @Param('userId') userId: string,
@@ -111,6 +153,10 @@ export class UsersController {
     });
   }
 
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: AuthenticationResponseMessage.Refresh,
+  })
   @Post('refresh')
   public async refreshToken(@Req() req: Request) {
     const { data } = await this.httpService.axiosRef.post(
@@ -122,6 +168,9 @@ export class UsersController {
     return data;
   }
 
+  @ApiResponse({
+    status: HttpStatus.OK,
+  })
   @UseGuards(CheckAuthGuard)
   @Patch('avatar')
   @UseInterceptors(InjectUserIdInterceptor, FileInterceptor('file'))

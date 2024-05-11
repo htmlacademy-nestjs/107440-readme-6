@@ -3,10 +3,10 @@ POST http://localhost:4000/api/users/signup HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "manunited@test.co",
+  "email": "fira@a.co",
   "dateBirth": "1992-02-22",
-  "firstname": "Man",
-  "lastname": "United",
+  "firstname": "Fizzzzzz",
+  "lastname": "Raaaaa",
   "password": "12345678"
 }
 
@@ -28,19 +28,19 @@ Content-Disposition: form-data; name="file"; filename="default-avatar-48.png"
 
 # Change Password
 POST http://localhost:4000/api/users/changePassword HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjMyNDRlNjc0ZDg1ZjEwMzFjZWE2ZjMiLCJlbWFpbCI6Im15ZW1haWxAdGVzdC5jbyIsInJvbGUiOiJ1c2VyIiwibGFzdG5hbWUiOiJDb2JhaW4iLCJmaXJzdG5hbWUiOiJLdXJ0IiwiaWF0IjoxNzE1NDUwMzIyLCJleHAiOjE3MTU0NTE4MjJ9.d82kQnDSp3hVQ2rzcerGwstY-RvWbk_CT3xafDSg0eE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjMyNDRlNjc0ZDg1ZjEwMzFjZWE2ZjMiLCJlbWFpbCI6Im15ZW1haWxAdGVzdC5jbyIsInJvbGUiOiJ1c2VyIiwibGFzdG5hbWUiOiJDb2JhaW4iLCJmaXJzdG5hbWUiOiJLdXJ0IiwiaWF0IjoxNzE1NDU1MjkxLCJleHAiOjE3MTU0NTY3OTF9.URi6J_XQiegz0p-fQ8OBaPbu7jZ_Zcmk1gqqG8kGeSs
 Content-Type: application/json
 
 {
-  "currentPassword": "222222",
-  "newPassword": "999999"
+  "currentPassword": "999999",
+  "newPassword": "123456"
 }
 
 ###
 
 # Get user by ID
 GET http://localhost:4000/api/users/663244e674d85f1031cea6f3 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjMyNDRlNjc0ZDg1ZjEwMzFjZWE2ZjMiLCJlbWFpbCI6Im15ZW1haWxAdGVzdC5jbyIsInJvbGUiOiJ1c2VyIiwibGFzdG5hbWUiOiJDb2JhaW4iLCJmaXJzdG5hbWUiOiJLdXJ0IiwiaWF0IjoxNzE1MTA5OTAzLCJleHAiOjE3MTUxMTE0MDN9.vtfKJilRyyxwc4NI36M5-7Vo_14XLneYYUD1Upkw6Gc
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjMyNDRlNjc0ZDg1ZjEwMzFjZWE2ZjMiLCJlbWFpbCI6Im15ZW1haWxAdGVzdC5jbyIsInJvbGUiOiJ1c2VyIiwibGFzdG5hbWUiOiJDb2JhaW4iLCJmaXJzdG5hbWUiOiJLdXJ0IiwiaWF0IjoxNzE1NDU1MjkxLCJleHAiOjE3MTU0NTY3OTF9.URi6J_XQiegz0p-fQ8OBaPbu7jZ_Zcmk1gqqG8kGeSs
 
 ###
 
@@ -50,19 +50,19 @@ Content-Type: application/json
 
 {
   "email": "myemail@test.co",
-  "password": "999999"
+  "password": "123456"
 }
 
 ###
 
 # Get new JWT pair
 POST http://localhost:4000/api/users/refresh HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIiLCJlbWFpbCI6InVzZXJAbm90Zm91bmQubG9jYWwiLCJyb2xlIjoidXNlciIsImxhc3RuYW1lIjoiU21pdGgiLCJmaXJzdG5hbWUiOiJLZWtzIiwidG9rZW5JZCI6IjBiMzk0NDA1LWM0ZTQtNGRmMy04NGNjLTg4ZTI5YTRiOGJkZiIsImlhdCI6MTcxNDY2NDEwOSwiZXhwIjoxNzE3MjU2MTA5fQ.A_-yL6zgW1H6VJbfMzXpQvJnK5flYjpwYOZiCxybnio
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjMyNDRlNjc0ZDg1ZjEwMzFjZWE2ZjMiLCJlbWFpbCI6Im15ZW1haWxAdGVzdC5jbyIsInJvbGUiOiJ1c2VyIiwibGFzdG5hbWUiOiJDb2JhaW4iLCJmaXJzdG5hbWUiOiJLdXJ0IiwidG9rZW5JZCI6IjdjZjczNGYzLWFjYjktNDI0OS05MzExLTUzZjlhZTM5OWExYiIsImlhdCI6MTcxNTQ1NTI2OSwiZXhwIjoxNzE3MTgzMjY5fQ.4OypaO7zHcjXnl98681nGoSNo8nLcgOu7NiFpGeIkU4
 
 ###
 
 # Get details about user (posts count, subscribers count and so on)
 GET http://localhost:4000/api/users/663244e674d85f1031cea6f3/details HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjMyNDRlNjc0ZDg1ZjEwMzFjZWE2ZjMiLCJlbWFpbCI6Im15ZW1haWxAdGVzdC5jbyIsInJvbGUiOiJ1c2VyIiwibGFzdG5hbWUiOiJDb2JhaW4iLCJmaXJzdG5hbWUiOiJLdXJ0IiwiaWF0IjoxNzE1MTA5OTAzLCJleHAiOjE3MTUxMTE0MDN9.vtfKJilRyyxwc4NI36M5-7Vo_14XLneYYUD1Upkw6Gc
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjMyNDRlNjc0ZDg1ZjEwMzFjZWE2ZjMiLCJlbWFpbCI6Im15ZW1haWxAdGVzdC5jbyIsInJvbGUiOiJ1c2VyIiwibGFzdG5hbWUiOiJDb2JhaW4iLCJmaXJzdG5hbWUiOiJLdXJ0IiwiaWF0IjoxNzE1NDU1MTQyLCJleHAiOjE3MTU0NTY2NDJ9.qTPePCNVq0rCGBYbXvH-oDyiTORoCErmQWic-Qy5-t0
 
 ###
