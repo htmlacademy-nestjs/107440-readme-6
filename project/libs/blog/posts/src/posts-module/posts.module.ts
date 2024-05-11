@@ -6,13 +6,19 @@ import { BlogPostController } from './posts.controller';
 import { BlogPostService } from './posts.service';
 import {
   BlogPostRepository,
+  PostLinkRepository,
   PostPhotoRepository,
+  PostQuoteRepository,
+  PostTextRepository,
   PostTypesRepository,
   PostVideoRepository,
 } from '../repositories';
 import {
   BlogPostFactory,
+  PostLinkFactory,
   PostPhotoFactory,
+  PostQuoteFactory,
+  PostTextFactory,
   PostTypesFactory,
   PostVideoFactory,
 } from '../factories';
@@ -30,6 +36,12 @@ import {
     PostVideoRepository,
     PostPhotoFactory,
     PostPhotoRepository,
+    PostLinkFactory,
+    PostLinkRepository,
+    PostQuoteFactory,
+    PostQuoteRepository,
+    PostTextFactory,
+    PostTextRepository,
   ],
 })
 export class PostsModule {}

@@ -21,7 +21,7 @@ export class BlogPostRdo {
   public userId: string;
 
   @Expose()
-  public likes?: number;
+  public likesCount: number;
 
   @Expose()
   public tags?: string[];

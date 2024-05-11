@@ -23,11 +23,15 @@ import { BlogPostQuery } from './posts.query';
 import { TagsValidationPipe } from '../pipes/tags.pipe';
 import { PostTypeFieldsValidationPipe } from '../pipes/post-type-fields.pipe';
 import { PostTypeFieldsUpdateValidationPipe } from '../pipes/post-type-fields.update.pipe';
+import { PostStateEnum } from '@project/core';
+import { RepostedBlogPostRdo } from '../rdo/blog-post-reposted.rdo';
+import { PostsUserIdQuery } from './posts.userId.query';
 
 @ApiTags('posts')
 @Controller('posts')
 export class BlogPostController {
   constructor(private blogPostsService: BlogPostService) {}
+
   @ApiResponse({
     status: HttpStatus.OK,
     description: PostsResponseMessage.PostsFound,
@@ -37,13 +41,34 @@ export class BlogPostController {
     description: PostsResponseMessage.PostsNotFound,
   })
   @Get()
-  public async getPosts(@Query() query: BlogPostQuery) {
-    const postsWithPagination = await this.blogPostsService.getAllPosts(query);
+  public async getPosts(@Query() query: BlogPostQuery, state?: PostStateEnum) {
+    const postsWithPagination = await this.blogPostsService.getAllPosts(
+      query,
+      state
+    );
+
     const result = {
       ...postsWithPagination,
-      entities: postsWithPagination.entities.map((post) => post.toPOJO()),
+      entities: postsWithPagination.entities.map((post) => ({
+        ...post.toPOJO(),
+      })),
     };
+
     return fillDto(BlogPostWithPaginationRdo, result);
+  }
+
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: PostsResponseMessage.PostsFound,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: PostsResponseMessage.PostsNotFound,
+  })
+  @Get('/drafts')
+  public async getDraftPosts(@Query() query: BlogPostQuery) {
+    const state = PostStateEnum.Draft;
+    return await this.getPosts(query, state);
   }
 
   @ApiResponse({
@@ -68,12 +93,14 @@ export class BlogPostController {
   @Patch('/:postId')
   @UsePipes(new TagsValidationPipe(), new PostTypeFieldsUpdateValidationPipe())
   public async updatePost(
+    @Param('postId') postId: string,
     @Body() blogPostDto: UpdatePostDto,
-    @Param('postId') postId: string
+    @Query() query: PostsUserIdQuery
   ) {
     const updatedPost = await this.blogPostsService.updatePost(
       blogPostDto,
-      postId
+      postId,
+      query.userId
     );
     return fillDto(BlogPostRdo, updatedPost.toPOJO());
   }
@@ -87,51 +114,45 @@ export class BlogPostController {
     description: PostsResponseMessage.PostNotFound,
   })
   @Delete('/:postId')
-  public async deletePost(@Param('postId') postId: string) {
-    await this.blogPostsService.deletePost(postId);
+  public async deletePost(
+    @Param('postId') postId: string,
+    @Query() query: PostsUserIdQuery
+  ) {
+    await this.blogPostsService.deletePost(postId, query.userId);
   }
 
   @ApiResponse({
-    status: HttpStatus.NO_CONTENT,
+    status: HttpStatus.OK,
     description: PostsResponseMessage.PostLiked,
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: PostsResponseMessage.PostNotFound,
   })
-  @Post('/:postId/like')
-  public async addLikeToPost(@Param('postId') postId: string) {
-    // Implementation
+  @Post('/:postId/like/:userId')
+  public async addLikeToPost(
+    @Param('postId') postId: string,
+    @Param('userId') userId: string
+  ) {
+    const updatedPost = await this.blogPostsService.addLike(postId, userId);
+    return fillDto(BlogPostRdo, updatedPost.toPOJO());
   }
 
   @ApiResponse({
-    status: HttpStatus.NO_CONTENT,
+    status: HttpStatus.OK,
     description: PostsResponseMessage.PostUnliked,
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: PostsResponseMessage.PostNotFound,
   })
-  @Delete('/:postId/like')
-  deleteLikeFromPost(@Param('postId') postId: string) {
-    // Implementation
-  }
-
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: PostsResponseMessage.PostsFound,
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: PostsResponseMessage.PostsNotFound,
-  })
-  @Get('/user/:userId')
-  getPostsByUserId(
-    @Param('userId') userId: string,
-    @Query('type') type: string,
-    @Query('tagName') tagName: string
+  @Delete('/:postId/like/:userId')
+  public async deleteLikeFromPost(
+    @Param('postId') postId: string,
+    @Param('userId') userId: string
   ) {
-    // Implementation
+    const updatedPost = await this.blogPostsService.removeLike(postId, userId);
+    return fillDto(BlogPostRdo, updatedPost.toPOJO());
   }
 
   @ApiResponse({
@@ -153,6 +174,23 @@ export class BlogPostController {
 
   @ApiResponse({
     status: HttpStatus.OK,
+    description: PostsResponseMessage.PostsFound,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: PostsResponseMessage.PostsNotFound,
+  })
+  @Post(':postId/repost')
+  public async makeRepost(
+    @Param('postId') postId: string,
+    @Query('userId') userId: string
+  ) {
+    const repostedPost = await this.blogPostsService.makeRepost(postId, userId);
+    return fillDto(RepostedBlogPostRdo, repostedPost.toPOJO());
+  }
+
+  @ApiResponse({
+    status: HttpStatus.OK,
     description: PostsResponseMessage.PostFound,
   })
   @ApiResponse({
@@ -161,7 +199,7 @@ export class BlogPostController {
   })
   @Get('/:postId')
   public async getPost(@Param('postId') postId: string) {
-    const post = await this.blogPostsService.getPost(postId);
+    const post = await this.blogPostsService.getPostById(postId);
     return fillDto(BlogPostRdo, post.toPOJO());
   }
 }

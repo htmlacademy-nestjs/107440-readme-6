@@ -12,6 +12,7 @@ export const AuthenticationResponseMessage = {
   UserExist: 'User with the email already exists',
   UserCreated: 'The new user has been successfully created.',
   CurrentPasswordError: 'Tha passed current password is not correct',
+  Refresh: 'Get a new access/refresh tokens',
 } as const;
 
 export const AuthenticationValidateMessage = {

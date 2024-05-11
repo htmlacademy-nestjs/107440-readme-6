@@ -1,11 +1,11 @@
 # Get all comments for post
-GET http://localhost:3000/api/posts/ab04593b-da99-4fe3-8b4b-e06d82e2efdd/comments HTTP/1.1
+GET http://localhost:3334/api/posts/dv04593b-da99-4fe3-8b4b-e06d82e2efgg/comments HTTP/1.1
 
 ###
 
 
 # Create a new comment for post
-POST http://localhost:3000/api/posts/ab04593b-da99-4fe3-8b4b-e06d82e2efdd/comments HTTP/1.1
+POST http://localhost:3334/api/posts/ab04593b-da99-4fe3-8b4b-e06d82e2efdd/comments HTTP/1.1
 Content-Type: application/json
 
 {
@@ -16,7 +16,7 @@ Content-Type: application/json
 ###
 
 # Delete a comment for specific post
-DELETE http://localhost:3000/api/posts/ab04593b-da99-4fe3-8b4b-e06d82e2efdd/comments/3fc7ccbb-495b-42d4-b853-c4ae62a991ac HTTP/1.1
+DELETE http://localhost:3334/api/posts/ab04593b-da99-4fe3-8b4b-e06d82e2efdd/comments/3fc7ccbb-495b-42d4-b853-c4ae62a991ac/user/6581762309c030b503e30518 HTTP/1.1
 
 ###
 

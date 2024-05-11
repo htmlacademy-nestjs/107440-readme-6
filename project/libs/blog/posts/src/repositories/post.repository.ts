@@ -1,12 +1,18 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { BasePostgresRepository } from '@project/data-access';
 import { PrismaClientService } from '@project/blog-models';
-import { BlogPost, PaginationResult, PostStateEnum } from '@project/core';
+import {
+  BlogPost,
+  PaginationResult,
+  PostStateEnum,
+  SortBy,
+} from '@project/core';
 
 import { BlogPostFactory } from '../factories';
 import { BlogPostEntity } from '../entities';
 import { BlogPostQuery } from '../posts-module/posts.query';
+import { PostNotFoundException } from '../exceptions/post-not-found.exception';
 
 @Injectable()
 export class BlogPostRepository extends BasePostgresRepository<
@@ -49,6 +55,27 @@ export class BlogPostRepository extends BasePostgresRepository<
     entity.updatedAt = record.updatedAt;
   }
 
+  public async findRepost(
+    originalPostId: string,
+    userId: string
+  ): Promise<BlogPostEntity | null> {
+    const postRecord = await this.client.post.findFirst({
+      where: {
+        originalPostId,
+        userId,
+        isReposted: true,
+      },
+    });
+
+    if (!postRecord) {
+      return null;
+    }
+
+    const blogPost = this.createEntityFromDocument(postRecord as BlogPost);
+
+    return blogPost;
+  }
+
   public async findById(id: string): Promise<BlogPostEntity> {
     const postRecord = await this.client.post.findFirst({
       where: {
@@ -65,7 +92,7 @@ export class BlogPostRepository extends BasePostgresRepository<
     });
 
     if (!postRecord) {
-      throw new NotFoundException(`Post with id ${id} not found.`);
+      throw new PostNotFoundException(id);
     }
 
     const postTypeFieldsKey = `${postRecord.type}Post`;
@@ -165,7 +192,8 @@ export class BlogPostRepository extends BasePostgresRepository<
   }
 
   public async find(
-    query?: BlogPostQuery
+    query?: BlogPostQuery,
+    state?: PostStateEnum
   ): Promise<PaginationResult<BlogPostEntity>> {
     const skip =
       query?.page && query?.limit ? (query.page - 1) * query.limit : undefined;
@@ -178,8 +206,34 @@ export class BlogPostRepository extends BasePostgresRepository<
       where.type = query.type;
     }
 
-    if (query?.sortDirection) {
-      orderBy.createdAt = query.sortDirection;
+    if (query?.tagName) {
+      where.tags = {
+        has: query.tagName,
+      };
+    }
+
+    if (query?.userId) {
+      where.userId = query.userId;
+    }
+
+    if (query?.sortBy) {
+      switch (query.sortBy) {
+        case SortBy.Likes:
+          orderBy.likesCount = query.sortDirection;
+          break;
+        case SortBy.Comments:
+          orderBy.comments = { _count: query.sortDirection };
+          break;
+        case SortBy.Date:
+          orderBy.createdAt = query.sortDirection;
+          break;
+        default:
+          break;
+      }
+    }
+
+    if (state) {
+      where.state = state;
     }
 
     const [records, postCount] = await Promise.all([

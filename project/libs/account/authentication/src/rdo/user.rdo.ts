@@ -4,14 +4,14 @@ import { ApiProperty } from '@nestjs/swagger';
 export class UserRdo {
   @ApiProperty({
     description: 'The uniq user ID',
-    example: '13',
+    example: '658170cbb954e9f5b905ccf4',
   })
   @Expose()
   public id: string;
 
   @ApiProperty({
-    description: 'User avatar path',
-    example: '/images/user.png',
+    description: 'User avatar id',
+    example: '663f97f715ea36199f936f7c',
   })
   @Expose()
   public avatar: string;

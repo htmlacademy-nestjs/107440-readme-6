@@ -27,6 +27,7 @@ export { StorableEntity } from './lib/interfaces/storable-entity.interface';
 export { EntityFactory } from './lib/interfaces/entity-factory.interface';
 
 export { SortDirection } from './lib/interfaces/sort-direction.interface';
+export { SortBy } from './lib/interfaces/sort-by.interface';
 export { PaginationResult } from './lib/interfaces/pagination.interface';
 
 export { Token } from './lib/interfaces/token.interface';
@@ -38,3 +39,7 @@ export { StoredFile } from './lib/types/stored-file.interface';
 export { Subscriber } from './lib/types/subscriber.interface';
 
 export { RabbitRouting } from './lib/types/rabbit-routing.enum';
+
+export { JwtToken } from './lib/interfaces/jwt-token.interface';
+
+export { RefreshTokenPayload } from './lib/interfaces/refresh-token-payload.interface';

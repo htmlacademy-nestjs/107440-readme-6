@@ -27,8 +27,6 @@ function getConfig(): ApplicationConfig {
     port: parseInt(process.env.PORT || `${DEFAULT_PORT}`, 10),
   };
 
-  console.log('getConfig, config - ', config);
-
   validateConfig(config);
   return config;
 }

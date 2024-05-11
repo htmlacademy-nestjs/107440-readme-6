@@ -16,10 +16,12 @@ import { CommentsResponseMessage } from './comments.constant';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from '../dto/create-comment.dto';
 import { CommentRdo } from '../rdo/comment.rdo';
+import { CommentsQuery } from './comments.query';
 
 @Controller('posts/:postId/comments')
 export class CommentsController {
   constructor(private commentsService: CommentsService) {}
+
   @ApiResponse({
     status: HttpStatus.OK,
     description: CommentsResponseMessage.CommentsFound,
@@ -28,13 +30,13 @@ export class CommentsController {
     status: HttpStatus.NOT_FOUND,
     description: CommentsResponseMessage.PostNotFound,
   })
-  @Get('/')
+  @Get()
   public async getComments(
     @Param('postId') postId: string,
-    @Query('offset') offset: number,
-    @Query('limit') limit: number
+    @Query() query?: CommentsQuery
   ) {
-    const comments = await this.commentsService.getComments(postId);
+    const comments = await this.commentsService.getComments(postId, query);
+
     return fillDto(
       CommentRdo,
       comments.map((comment) => comment.toPOJO())
@@ -49,7 +51,7 @@ export class CommentsController {
     status: HttpStatus.NOT_FOUND,
     description: CommentsResponseMessage.PostNotFound,
   })
-  @Post('/')
+  @Post()
   public async createComment(
     @Param('postId') postId: string,
     @Body() dto: CreateCommentDto
@@ -66,8 +68,15 @@ export class CommentsController {
     status: HttpStatus.NOT_FOUND,
     description: CommentsResponseMessage.PostOrCommentNotFound,
   })
-  @Delete('/:commentId')
-  public async deleteComment(@Param('commentId') commentId: string) {
+  @Delete('/:commentId/users/:userId')
+  public async deleteComment(
+    @Param('postId') postId: string,
+    @Param('commentId') commentId: string,
+    @Param('userId') userId: string
+  ) {
+    await this.commentsService.checkCommentByUserId(commentId, userId);
+    await this.commentsService.checkCommentByPostId(commentId, postId);
+
     await this.commentsService.deleteComment(commentId);
   }
 }
