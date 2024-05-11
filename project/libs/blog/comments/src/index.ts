@@ -1,3 +1,5 @@
+export { CommentsResponseMessage } from './comments-module/comments.constant';
+
 export { CommentsQuery } from './comments-module/comments.query';
 
 export { CreateCommentDto } from './dto/create-comment.dto';

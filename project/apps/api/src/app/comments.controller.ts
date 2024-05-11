@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
   Post,
   Query,
@@ -14,7 +15,11 @@ import {
 } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 
-import { CommentsQuery, CreateCommentDto } from '@project/comments';
+import {
+  CommentsQuery,
+  CommentsResponseMessage,
+  CreateCommentDto,
+} from '@project/comments';
 
 import { AxiosExceptionFilter } from './filters/axios-exception.filter';
 import { CheckAuthGuard } from './guards/check-auth.guard';
@@ -22,7 +27,9 @@ import { ApplicationServiceURL } from './app.config';
 import { BlogPost, PostStateEnum } from '@project/core';
 import { InjectUserIdInterceptor } from '@project/interceptors';
 import { RequestWithTokenPayload } from '@project/authentication';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('comments')
 @Controller('blog/:postId/comments')
 @UseFilters(AxiosExceptionFilter)
 export class CommentsController {
@@ -36,6 +43,14 @@ export class CommentsController {
     return data;
   }
 
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: CommentsResponseMessage.CommentsFound,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: CommentsResponseMessage.PostNotFound,
+  })
   @Get()
   public async getAllComments(
     @Param('postId') postId: string,
@@ -59,6 +74,14 @@ export class CommentsController {
     return data;
   }
 
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: CommentsResponseMessage.CommentsFound,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: CommentsResponseMessage.PostNotFound,
+  })
   @UseGuards(CheckAuthGuard)
   @UseInterceptors(InjectUserIdInterceptor)
   @Post()
@@ -76,6 +99,14 @@ export class CommentsController {
     return data;
   }
 
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: CommentsResponseMessage.CommentsFound,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: CommentsResponseMessage.PostOrCommentNotFound,
+  })
   @UseGuards(CheckAuthGuard)
   @Delete(':commentId')
   public async delete(

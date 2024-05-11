@@ -21,6 +21,7 @@ import { CommentsQuery } from './comments.query';
 @Controller('posts/:postId/comments')
 export class CommentsController {
   constructor(private commentsService: CommentsService) {}
+
   @ApiResponse({
     status: HttpStatus.OK,
     description: CommentsResponseMessage.CommentsFound,
