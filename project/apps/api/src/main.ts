@@ -7,6 +7,8 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+
 import { RequestIdInterceptor } from '@project/interceptors';
 
 import { AppModule } from './app/app.module';
@@ -21,6 +23,15 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
   const port = configService.get('apiGateway.port');
+
+  const config = new DocumentBuilder()
+    .setTitle('The <APIGatwway> service')
+    .setDescription('APIGatwway service API')
+    .setVersion('1.0')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('spec/apiGateway', app, document);
 
   await app.listen(port);
 

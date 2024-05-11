@@ -9,6 +9,7 @@ import {
   POST_REPOST_USER_MISMATCH_ERROR,
   POST_REPOST_WAS_ALREADY_MADE_ERROR,
   POST_TYPE_MISMATCH_ON_UPDATE,
+  POST_USER_ID_MISMATCH,
 } from './posts.constant';
 import { BlogPostFactory, PostTypesFactory } from '../factories';
 import { BlogPostEntity } from '../entities';
@@ -52,11 +53,15 @@ export class BlogPostService {
     return newPost;
   }
 
-  public async updatePost(dto: UpdatePostDto, postId: string) {
+  public async updatePost(dto: UpdatePostDto, postId: string, userId: string) {
     const existsPost = await this.blogPostRepository.findById(postId);
 
     if (dto.type !== existsPost.type) {
       throw new ConflictException(POST_TYPE_MISMATCH_ON_UPDATE);
+    }
+
+    if (userId !== existsPost.userId) {
+      throw new ConflictException(POST_USER_ID_MISMATCH);
     }
 
     let hasPostTypeFieldsChanges = false;
@@ -94,12 +99,14 @@ export class BlogPostService {
     return existsPost;
   }
 
-  public async deletePost(postId: string) {
-    try {
-      await this.blogPostRepository.deleteById(postId);
-    } catch {
-      throw new PostNotFoundException(postId);
+  public async deletePost(postId: string, userId: string) {
+    const existsPost = await this.getPostById(postId);
+
+    if (existsPost.userId !== userId) {
+      throw new ConflictException(POST_USER_ID_MISMATCH);
     }
+
+    await this.blogPostRepository.deleteById(postId);
   }
 
   public async addLike(postId: string, userId: string) {

@@ -13,6 +13,9 @@ export const POST_REPOST_USER_MISMATCH_ERROR =
 export const POST_REPOST_WAS_ALREADY_MADE_ERROR =
   'This post was reposted before';
 
+export const POST_USER_ID_MISMATCH =
+  'You can only update and delete your own posts.';
+
 export const DEFAULT_POST_COUNT_LIMIT = 25;
 export const DEFAULT_SORT_DIRECTION = SortDirection.Desc;
 export const DEFAULT_SORT_BY = SortBy.Date;

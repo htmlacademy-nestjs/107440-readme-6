@@ -17,7 +17,7 @@ GET http://localhost:4000/api/blog?type=link HTTP/1.1
 
 # Sort posts by likes/comments. Deafult is by date.
 
-GET http://localhost:4000/api/blog?sortDirection=desc&sortBy=likes HTTP/1.1
+GET http://localhost:4000/api/blog?sortDirection=asc&sortBy=comments HTTP/1.1
 
 ###
 
@@ -29,14 +29,14 @@ GET http://localhost:4000/api/blog/cfc58b27-cc04-432d-8fcc-c4bfa5fc7a34 HTTP/1.1
 
 # Create a new post
 POST http://localhost:4000/api/blog HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjMyNDRlNjc0ZDg1ZjEwMzFjZWE2ZjMiLCJlbWFpbCI6Im15ZW1haWxAdGVzdC5jbyIsInJvbGUiOiJ1c2VyIiwibGFzdG5hbWUiOiJDb2JhaW4iLCJmaXJzdG5hbWUiOiJLdXJ0IiwiaWF0IjoxNzE0OTI2MTE5LCJleHAiOjE3MTQ5Mjc2MTl9.-iEG6sSuCAOmkO9e9jQ7GnhNX5rd_LmhG7grQaiUJrE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjMyNDRlNjc0ZDg1ZjEwMzFjZWE2ZjMiLCJlbWFpbCI6Im15ZW1haWxAdGVzdC5jbyIsInJvbGUiOiJ1c2VyIiwibGFzdG5hbWUiOiJDb2JhaW4iLCJmaXJzdG5hbWUiOiJLdXJ0IiwiaWF0IjoxNzE1NDUzNjIyLCJleHAiOjE3MTU0NTUxMjJ9.ZmSiGaEhbFTF19gLsertqraNQZGCLNrJFJtE3IbvLSQ
 Content-Type: application/json
 
 {
   "type": "link",
   "postTypeFields": {
     "link": "https://www.youtube.com/watch?v=_Z1heGTnVJM&ab_channel=InterMiamiCF",
-    "description": "Inter Miami"
+    "description": "Inter Miami New one 222222"
   }
 }
 
@@ -44,8 +44,8 @@ Content-Type: application/json
 
 # Delete a post by id
 
-DELETE http://localhost:4000/api/blog/cfc58b27-cc04-432d-8fcc-c4bfa5fc7a34 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjMyNDRlNjc0ZDg1ZjEwMzFjZWE2ZjMiLCJlbWFpbCI6Im15ZW1haWxAdGVzdC5jbyIsInJvbGUiOiJ1c2VyIiwibGFzdG5hbWUiOiJDb2JhaW4iLCJmaXJzdG5hbWUiOiJLdXJ0IiwiaWF0IjoxNzE1MTgzMzMyLCJleHAiOjE3MTUxODQ4MzJ9.9pwVE2_eNaR201jaf6XvWPnY74kI-hnB9xAR65AnVko
+DELETE http://localhost:4000/api/blog/cc169f12-bfd5-407a-92a1-55db48a9ebcd HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjMyNDRlNjc0ZDg1ZjEwMzFjZWE2ZjMiLCJlbWFpbCI6Im15ZW1haWxAdGVzdC5jbyIsInJvbGUiOiJ1c2VyIiwibGFzdG5hbWUiOiJDb2JhaW4iLCJmaXJzdG5hbWUiOiJLdXJ0IiwiaWF0IjoxNzE1NDUzNjIyLCJleHAiOjE3MTU0NTUxMjJ9.ZmSiGaEhbFTF19gLsertqraNQZGCLNrJFJtE3IbvLSQ
 
 ###
 
@@ -53,11 +53,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjMyNDRlN
 
 PATCH http://localhost:4000/api/blog/6d308040-96a2-4162-bea6-2338e9976540 HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjMyNDRlNjc0ZDg1ZjEwMzFjZWE2ZjMiLCJlbWFpbCI6Im15ZW1haWxAdGVzdC5jbyIsInJvbGUiOiJ1c2VyIiwibGFzdG5hbWUiOiJDb2JhaW4iLCJmaXJzdG5hbWUiOiJLdXJ0IiwiaWF0IjoxNzE1MTgzMzMyLCJleHAiOjE3MTUxODQ4MzJ9.9pwVE2_eNaR201jaf6XvWPnY74kI-hnB9xAR65AnVko
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjMyNDRlNjc0ZDg1ZjEwMzFjZWE2ZjMiLCJlbWFpbCI6Im15ZW1haWxAdGVzdC5jbyIsInJvbGUiOiJ1c2VyIiwibGFzdG5hbWUiOiJDb2JhaW4iLCJmaXJzdG5hbWUiOiJLdXJ0IiwiaWF0IjoxNzE1NDUyODYyLCJleHAiOjE3MTU0NTQzNjJ9.grRppBPTqupG2yIbz-uiQOxLjfYpp6AMLibBiPYsNC0
 
 {
   "type": "video",
-  "tags": ["cover", "music", "rock"],
+  "tags": ["cover", "music", "metallica"],
   "postTypeFields": {
     "title": "Metallica - Enter Sandman - (Guitar Cover) 1",
     "videoUrl": "https://www.youtube.com/watch?v=91vFQExKpYQ&ab_channel=ColeRolland"
@@ -75,7 +75,7 @@ Content-Type: application/json
 
 # Find posts by tagName
 
-GET http://localhost:4000/api/blog?tagName=cover HTTP/1.1
+GET http://localhost:4000/api/blog?tagName=food HTTP/1.1
 Content-Type: application/json
 
 ###

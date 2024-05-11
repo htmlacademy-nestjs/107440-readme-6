@@ -25,6 +25,7 @@ import { PostTypeFieldsValidationPipe } from '../pipes/post-type-fields.pipe';
 import { PostTypeFieldsUpdateValidationPipe } from '../pipes/post-type-fields.update.pipe';
 import { PostStateEnum } from '@project/core';
 import { RepostedBlogPostRdo } from '../rdo/blog-post-reposted.rdo';
+import { PostsUserIdQuery } from './posts.userId.query';
 
 @ApiTags('posts')
 @Controller('posts')
@@ -93,11 +94,13 @@ export class BlogPostController {
   @UsePipes(new TagsValidationPipe(), new PostTypeFieldsUpdateValidationPipe())
   public async updatePost(
     @Param('postId') postId: string,
-    @Body() blogPostDto: UpdatePostDto
+    @Body() blogPostDto: UpdatePostDto,
+    @Query() query: PostsUserIdQuery
   ) {
     const updatedPost = await this.blogPostsService.updatePost(
       blogPostDto,
-      postId
+      postId,
+      query.userId
     );
     return fillDto(BlogPostRdo, updatedPost.toPOJO());
   }
@@ -111,12 +114,15 @@ export class BlogPostController {
     description: PostsResponseMessage.PostNotFound,
   })
   @Delete('/:postId')
-  public async deletePost(@Param('postId') postId: string) {
-    await this.blogPostsService.deletePost(postId);
+  public async deletePost(
+    @Param('postId') postId: string,
+    @Query() query: PostsUserIdQuery
+  ) {
+    await this.blogPostsService.deletePost(postId, query.userId);
   }
 
   @ApiResponse({
-    status: HttpStatus.NO_CONTENT,
+    status: HttpStatus.OK,
     description: PostsResponseMessage.PostLiked,
   })
   @ApiResponse({
@@ -133,7 +139,7 @@ export class BlogPostController {
   }
 
   @ApiResponse({
-    status: HttpStatus.NO_CONTENT,
+    status: HttpStatus.OK,
     description: PostsResponseMessage.PostUnliked,
   })
   @ApiResponse({
