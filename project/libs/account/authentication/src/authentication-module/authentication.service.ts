@@ -151,4 +151,18 @@ export class AuthenticationService {
 
     return existUser;
   }
+
+  public async addAvatar(avatarId: string, userId: string) {
+    const existUser = await this.getUserById(userId);
+
+    if (!existUser) {
+      throw new NotFoundException(`User with id ${userId} not found`);
+    }
+
+    existUser.avatar = avatarId;
+
+    await this.blogUserRepository.update(existUser);
+
+    return existUser;
+  }
 }

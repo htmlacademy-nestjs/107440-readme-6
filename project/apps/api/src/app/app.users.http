@@ -10,9 +10,25 @@ Content-Type: application/json
   "password": "12345678"
 }
 
+###
+
+# Upload avatar
+PATCH http://localhost:4000/api/users/avatar HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjMyNDRlNjc0ZDg1ZjEwMzFjZWE2ZjMiLCJlbWFpbCI6Im15ZW1haWxAdGVzdC5jbyIsInJvbGUiOiJ1c2VyIiwibGFzdG5hbWUiOiJDb2JhaW4iLCJmaXJzdG5hbWUiOiJLdXJ0IiwiaWF0IjoxNzE1NDQ5NjAzLCJleHAiOjE3MTU0NTExMDN9.Zh7S_qWQL74l-rV6SOsc277lIR4UFkE7VPQO2S6uVvU
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="default-avatar-48.png"
+
+< ./default-avatar-48.png
+
+--boundary--
+
+###
+
 # Change Password
 POST http://localhost:4000/api/users/changePassword HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjMyNDRlNjc0ZDg1ZjEwMzFjZWE2ZjMiLCJlbWFpbCI6Im15ZW1haWxAdGVzdC5jbyIsInJvbGUiOiJ1c2VyIiwibGFzdG5hbWUiOiJDb2JhaW4iLCJmaXJzdG5hbWUiOiJLdXJ0IiwiaWF0IjoxNzE0OTMzNjE2LCJleHAiOjE3MTQ5MzUxMTZ9.71p5lFKJ9oQjK8M6UjujPER2eJqdH-ZI5zvDO7K6R88
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjMyNDRlNjc0ZDg1ZjEwMzFjZWE2ZjMiLCJlbWFpbCI6Im15ZW1haWxAdGVzdC5jbyIsInJvbGUiOiJ1c2VyIiwibGFzdG5hbWUiOiJDb2JhaW4iLCJmaXJzdG5hbWUiOiJLdXJ0IiwiaWF0IjoxNzE1NDUwMzIyLCJleHAiOjE3MTU0NTE4MjJ9.d82kQnDSp3hVQ2rzcerGwstY-RvWbk_CT3xafDSg0eE
 Content-Type: application/json
 
 {

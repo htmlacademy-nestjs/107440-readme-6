@@ -5,7 +5,9 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -29,6 +31,8 @@ import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { RequestWithUser } from './request-with-user.interface';
 import { JwtRefreshGuard } from '../guards/jwt-refresh.guard';
 import { RequestWithTokenPayload } from './request-with-token-payload.interface';
+import { UserAvatarDto } from '../dto/user-avatar.dto';
+import { UserAvatarQuery } from './user-avatar.query';
 
 @ApiTags('authentication')
 @Controller('auth')
@@ -118,5 +122,18 @@ export class AuthenticationController {
   @Post('check')
   public async checkToken(@Req() { user: payload }: RequestWithTokenPayload) {
     return payload;
+  }
+
+  @Patch('avatar')
+  public async uploadAvatar(
+    @Body() body: UserAvatarDto,
+    @Query() query: UserAvatarQuery
+  ) {
+    const updatedUser = await this.authService.addAvatar(
+      body.avatar,
+      query.userId
+    );
+
+    return fillDto(UserRdo, updatedUser.toPOJO());
   }
 }

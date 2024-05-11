@@ -1,21 +1,31 @@
+import 'multer';
 import { HttpService } from '@nestjs/axios';
 import {
   Body,
   Controller,
   Get,
+  MaxFileSizeValidator,
   Param,
+  ParseFilePipe,
+  Patch,
   Post,
   Req,
+  UploadedFile,
   UseFilters,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+
+import FormData from 'form-data';
+
+import { FileInterceptor } from '@nestjs/platform-express';
 
 import {
   ChangePasswordDto,
   SignInUserDto,
   UserDetailsRdo,
   SignUpUserDto,
+  RequestWithTokenPayload,
 } from '@project/authentication';
 
 import { AxiosExceptionFilter } from './filters/axios-exception.filter';
@@ -24,6 +34,8 @@ import { ApplicationServiceURL } from './app.config';
 import { InjectUserIdInterceptor } from '@project/interceptors';
 import { CheckAuthGuard } from './guards/check-auth.guard';
 import { buildReqHeaders, fillDto } from '@project/helpers';
+import { AVATAR_FILE_FORMATS, MAX_AVATAR_FILE_SIZE } from '@project/blog-user';
+import { FileTypeValidationPipe } from '@project/pipes';
 
 @Controller('users')
 @UseFilters(AxiosExceptionFilter)
@@ -108,5 +120,43 @@ export class UsersController {
     );
 
     return data;
+  }
+
+  @UseGuards(CheckAuthGuard)
+  @Patch('avatar')
+  @UseInterceptors(InjectUserIdInterceptor, FileInterceptor('file'))
+  public async uploadAvatar(
+    @UploadedFile(
+      new FileTypeValidationPipe(AVATAR_FILE_FORMATS),
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: MAX_AVATAR_FILE_SIZE }),
+        ],
+      })
+    )
+    file: Express.Multer.File,
+    @Req() req: RequestWithTokenPayload
+  ) {
+    const userId = req.user.sub;
+
+    const formData = new FormData();
+    formData.append('file', file.buffer, { filename: file.originalname });
+
+    const { data: fileData } = await this.httpService.axiosRef.post(
+      `${ApplicationServiceURL.FileStorage}/upload`,
+      formData,
+      {
+        headers: {
+          ...formData.getHeaders(),
+        },
+      }
+    );
+
+    const { data: userData } = await this.httpService.axiosRef.patch(
+      `${ApplicationServiceURL.Users}/avatar?userId=${userId}`,
+      { avatar: fileData.id }
+    );
+
+    return userData;
   }
 }
